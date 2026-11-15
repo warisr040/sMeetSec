@@ -46,8 +46,9 @@ def main() -> int:
 
     port = free_port()
     env = dict(os.environ, SMEETSEC_MOCK="1", SMEETSEC_DATA=str(tmp / "data"))
+    logf = open(tmp / "server.log", "w", encoding="utf-8", errors="replace")
     proc = subprocess.Popen([sys.executable, str(ROOT / "run.py"), "--no-browser", "--port", str(port)],
-                            cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                            cwd=ROOT, env=env, stdout=logf, stderr=subprocess.STDOUT)
     base = f"http://127.0.0.1:{port}"
     c = httpx.Client(base_url=base, timeout=30)
     try:
@@ -73,8 +74,13 @@ def main() -> int:
                 time.sleep(0.25)
             return c.get("/api/jobs").json()
 
-        r = c.post("/api/upload", files={"file": ("test.wav", wav.read_bytes())},
-                   data={"title": "Smoke test", "language": "en", "auto_report": "true", "speakers": "2"}).json()
+        resp = c.post("/api/upload", files={"file": ("test.wav", wav.read_bytes())},
+                      data={"title": "Smoke test", "language": "en", "auto_report": "true", "speakers": "2"})
+        if resp.status_code != 200:
+            print("upload failed:", resp.status_code, resp.text[:500])
+            logf.flush()
+            print((tmp / "server.log").read_text(encoding="utf-8", errors="replace")[-4000:])
+        r = resp.json()
         mid = r["meeting"]["id"]
         js = wait_jobs()
         check("transcribe + report jobs", all(j["status"] == "done" for j in js), str([(j["kind"], j["status"], j["error"]) for j in js]))
