@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import threading
 from pathlib import Path
 
@@ -22,6 +23,14 @@ HALLUCINATIONS = {
     "谢谢观看", "謝謝觀看", "谢谢大家观看", "字幕由amara.org社区提供", "字幕由amara.org社區提供",
     "请不吝点赞 订阅 转发 打赏支持明镜与点点栏目", "点赞订阅转发", "明镜与点点栏目",
 }
+
+
+_REPEAT = re.compile(r"(\S.{0,11}?)(\s*)(?:\1\2){3,}\1", re.S)
+
+
+def clean_repeats(text: str) -> str:
+    """Collapse Whisper repetition loops ("颜色颜色颜色..." / "okay okay okay ...") to two copies."""
+    return _REPEAT.sub(lambda m: m.group(1) + m.group(2) + m.group(1), text).strip()
 
 
 def is_hallucination(text: str, no_speech_prob: float = 0.0, avg_logprob: float = 0.0) -> bool:
@@ -188,7 +197,7 @@ def transcribe_file(path: str | Path, language: str = "auto", quality: str = "be
         out.append({
             "start": round(seg.start, 2),
             "end": round(seg.end, 2),
-            "text": seg.text.strip(),
+            "text": clean_repeats(seg.text),
             "speaker": "",
         })
         report(0.06 + 0.92 * min(1.0, seg.end / duration),

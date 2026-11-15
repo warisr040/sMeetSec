@@ -6,6 +6,7 @@
 - Built automatically on GitHub Actions (Windows), with the automated test and a check that the packaged engine starts.
 - Closing sMeetSec also stops the translation engine; the engine frees its memory after 10 idle minutes.
 - Ollama is still available as an option (Settings → Translation engine).
+- Fixes found by the real Windows end-to-end test: audio decoding with new PyAV versions; Whisper repetition loops ("word word word…") are collapsed; the English report is translated when a model answers in the meeting language.
 
 ## 0.2.0 (2026-11-15)
 - **One-click setup**: unzip and start `sMeetSec.exe`; the first start downloads a private Python, packages and models into the sMeetSec folder (no Python install, nothing system-wide).

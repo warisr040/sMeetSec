@@ -124,8 +124,13 @@ def normalize(rep: dict) -> dict:
     return out
 
 
+def _mostly_ascii(rep: dict) -> bool:
+    text = json.dumps(rep, ensure_ascii=False)
+    return sum(c.isascii() for c in text) / max(1, len(text)) > 0.85
+
+
 def translate_report(rep: dict, target: str) -> dict:
-    if target == "en":
+    if target == "en" and _mostly_ascii(rep):  # small models sometimes answer in the meeting language
         return rep
     system = (
         f"Translate all text values of this JSON meeting report into {config.lang_label(target)}. "

@@ -24,7 +24,7 @@ import numpy as np
 from . import config, hardware, meetings
 from .governor import governor
 from .jobs import jobs
-from .transcriber import SAMPLE_RATE, is_hallucination, models
+from .transcriber import SAMPLE_RATE, clean_repeats, is_hallucination, models
 
 log = logging.getLogger("smeetsec.live")
 
@@ -203,7 +203,7 @@ class LiveSession:
             x, language=None if self.language in ("auto", "mixed") else self.language,
             beam_size=beam, vad_filter=False, condition_on_previous_text=False,
             initial_prompt=self._prompt(), hotwords=self.hotwords, temperature=0.0)
-        return " ".join(s.text.strip() for s in segs
+        return " ".join(clean_repeats(s.text) for s in segs
                         if not is_hallucination(s.text, s.no_speech_prob, s.avg_logprob)).strip()
 
     def _commit(self, x: np.ndarray, start: int) -> None:
@@ -217,7 +217,7 @@ class LiveSession:
         for s in segs:
             if is_hallucination(s.text, s.no_speech_prob, s.avg_logprob):
                 continue
-            seg = {"start": round(t0 + s.start, 2), "end": round(t0 + s.end, 2), "text": s.text.strip(),
+            seg = {"start": round(t0 + s.start, 2), "end": round(t0 + s.end, 2), "text": clean_repeats(s.text),
                    "speaker": "", "lang": getattr(info, "language", "")}
             self.segments.append(seg)
             self.emit({"type": "commit", "segment": seg})
