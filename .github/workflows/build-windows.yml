@@ -62,13 +62,19 @@ jobs:
       - name: Download llama.cpp (Windows CPU build)
         shell: pwsh
         run: |
-          $rel = gh api repos/ggml-org/llama.cpp/releases/latest | ConvertFrom-Json
-          Write-Output "llama.cpp release: $($rel.tag_name)"
-          $asset = $rel.assets | Where-Object { $_.name -match 'win' -and $_.name -match 'cpu' -and $_.name -match 'x64' -and $_.name -like '*.zip' } | Select-Object -First 1
-          if (-not $asset) {
-            $asset = $rel.assets | Where-Object { $_.name -match 'win' -and $_.name -match 'x64' -and $_.name -like '*.zip' -and $_.name -notmatch 'cuda|vulkan|sycl|hip|arm64|cudart' } | Select-Object -First 1
+          # newest release that actually has a Windows CPU zip (some releases only carry a tag file)
+          $rels = gh api "repos/ggml-org/llama.cpp/releases?per_page=30" | ConvertFrom-Json
+          $rel = $null; $asset = $null
+          foreach ($r in $rels) {
+            if ($r.draft) { continue }
+            $a = $r.assets | Where-Object { $_.name -match 'win' -and $_.name -match 'cpu' -and $_.name -match 'x64' -and $_.name -like '*.zip' } | Select-Object -First 1
+            if (-not $a) {
+              $a = $r.assets | Where-Object { $_.name -match 'win' -and $_.name -match 'x64' -and $_.name -like '*.zip' -and $_.name -notmatch 'cuda|vulkan|sycl|hip|arm64|cudart|opencl' } | Select-Object -First 1
+            }
+            if ($a) { $rel = $r; $asset = $a; break }
           }
-          if (-not $asset) { $rel.assets | ForEach-Object { $_.name }; Write-Error 'no Windows CPU asset found'; exit 1 }
+          if (-not $asset) { Write-Error 'no Windows CPU asset found in the last 30 llama.cpp releases'; exit 1 }
+          Write-Output "llama.cpp release: $($rel.tag_name)"
           Write-Output "asset: $($asset.name)"
           Invoke-WebRequest $asset.browser_download_url -OutFile llama.zip
           Expand-Archive llama.zip -DestinationPath llama-tmp -Force
