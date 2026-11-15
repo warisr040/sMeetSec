@@ -85,6 +85,12 @@ jobs:
           & .\llama\llama-server.exe --version
           Set-Content llama\VERSION.txt "llama.cpp $($rel.tag_name) ($($asset.name))"
 
+      - name: Real end-to-end test (small real models, built-in llama.cpp)
+        shell: pwsh
+        env:
+          SMEETSEC_LLAMA_SERVER: ${{ github.workspace }}\llama\llama-server.exe
+        run: python tests/e2e_real.py
+
       - uses: actions/setup-go@v5
         with:
           go-version: "1.24"
