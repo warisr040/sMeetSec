@@ -1,0 +1,22 @@
+sMeetSec — PRIVACY NOTICE
+Version 1 · simply handle IT
+
+Short version: sMeetSec does not collect, send or sell any data. Meetings stay on this computer.
+
+- sMeetSec works offline. It does not create accounts, show ads, track usage or contact any
+  server. The app talks only to itself on this computer (127.0.0.1): its engine, its
+  built-in translation engine (llama.cpp) or, if you choose it, Ollama on this computer.
+- Internet is used only when you press Models > Download (Hugging Face and GitHub, to fetch
+  the speech, speaker and translation models). You start that yourself; nothing about you
+  or your meetings is sent.
+- What is stored, and where:
+  · recordings, transcripts, translations and reports: data\meetings\ in the sMeetSec folder;
+  · settings: data\settings.json;
+  · desktop window data (theme): %LOCALAPPDATA%\sMeetSec.
+  Delete a meeting in the app (🗑) or delete the folders above to remove everything.
+- Live mode uses the microphone, and system audio only when you choose it and confirm the
+  Windows / browser share dialog. Audio is processed on this computer only.
+
+RECORDING PEOPLE: tell meeting participants that the meeting is recorded and transcribed,
+and follow your company rules and Thailand's Personal Data Protection Act (PDPA). Recordings
+and transcripts can contain personal data; keep them only as long as needed.

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="simple">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sMeetSec - Meeting Secretary</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23222831'/%3E%3Crect x='9' y='11' width='40' height='29' rx='7' fill='%23f2f2f2'/%3E%3Cpath d='M17 39 L12 51 L29 39 Z' fill='%23f2f2f2'/%3E%3Crect x='15' y='18' width='24' height='3.2' rx='1.6' fill='%238a93a6'/%3E%3Crect x='15' y='24.4' width='17' height='3.2' rx='1.6' fill='%238a93a6'/%3E%3Crect x='15' y='30.8' width='21' height='3.2' rx='1.6' fill='%238a93a6'/%3E%3Ccircle cx='47' cy='12' r='5.5' fill='%23ff6b6b' stroke='%23222831' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='11' fill='%234dabf7'/%3E%3Ctext x='50' y='55' font-size='15' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23fff'%3Es%3C/text%3E%3C/svg%3E">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("smeetsec.theme")||"simple"}catch(e){}</script>
+<style>
+/* =================== themes (same family as sGenko / sUML / sERP) =================== */
+:root,[data-theme=simple]{
+  --bg:#e9ebf0;--panel:#ffffff;--panel2:#f4f5f8;--line:#e3e6ec;--ink:#1d2330;--muted:#6b7380;
+  --brand:#4f46e5;--bad:#e03131;--ok:#2f9e44;--warn:#d97706;--brand2:rgba(79,70,229,.11);--on-brand:#ffffff;
+  --tex:none;--glass:rgba(255,255,255,.94);--shadow:0 16px 50px rgba(30,27,75,.18);color-scheme:light;
+}
+[data-theme=dark]{
+  --bg:#15171b;--panel:#23272e;--panel2:#2b3038;--line:#363c46;--ink:#e6e8eb;--muted:#9aa3ae;
+  --brand:#4dabf7;--bad:#ff6b6b;--ok:#51cf66;--warn:#fcc419;--brand2:#1f4a6b;--on-brand:#081521;
+  --tex:none;--glass:rgba(35,39,46,.95);--shadow:0 16px 50px rgba(0,0,0,.6);color-scheme:dark;
+}
+[data-theme=starry]{
+  --bg:#0a1530;--panel:#0c1a3d;--panel2:#11234d;--line:rgba(160,190,255,.2);--ink:#e8ecff;--muted:#9fb0d6;
+  --brand:#8cc8ff;--bad:#fca5a5;--ok:#7dd3fc;--warn:#fcd34d;--brand2:rgba(140,200,255,.18);--on-brand:#0a1530;
+  --glass:rgba(12,26,61,.95);
+  --tex:radial-gradient(1.3px 1.3px at 20% 30%,rgba(255,255,255,.55) 60%,transparent 100%) 0 0/83px 79px,radial-gradient(1.1px 1.1px at 65% 70%,rgba(200,225,255,.45) 60%,transparent 100%) 0 0/127px 109px,radial-gradient(1px 1px at 40% 55%,rgba(200,215,255,.42) 60%,transparent 100%) 0 0/61px 67px;
+  --shadow:0 16px 50px rgba(0,0,0,.6);color-scheme:dark;
+}
+[data-theme=forest]{
+  --bg:#e3ebdc;--panel:#f8f5ec;--panel2:#efeadc;--line:rgba(47,90,54,.18);--ink:#1f3324;--muted:#5f7363;
+  --brand:#2f6b3a;--bad:#b4413a;--ok:#2f6b3a;--warn:#b7791f;--brand2:rgba(47,107,58,.12);--on-brand:#ffffff;
+  --glass:rgba(248,245,236,.96);
+  --tex:radial-gradient(ellipse 50% 40% at 95% 100%,rgba(47,107,58,.16),transparent 70%);
+  --shadow:0 16px 50px rgba(31,51,36,.2);color-scheme:light;
+}
+[data-theme=burning]{
+  --bg:#150e0b;--panel:#1c120e;--panel2:#261813;--line:rgba(255,140,80,.18);--ink:#f7e9df;--muted:#c4a796;
+  --brand:#ff7a33;--bad:#fb7185;--ok:#fbbf24;--warn:#fbbf24;--brand2:rgba(255,122,51,.18);--on-brand:#1c120e;
+  --glass:rgba(28,18,14,.95);
+  --tex:radial-gradient(ellipse 70% 45% at 50% 115%,rgba(255,106,0,.22),transparent 60%);
+  --shadow:0 16px 50px rgba(0,0,0,.65);color-scheme:dark;
+}
+[data-theme=sakura]{
+  --bg:#f7e3ea;--panel:#fff6f9;--panel2:#fdebf1;--line:#f3d3df;--ink:#4a2a36;--muted:#9a6b7c;
+  --brand:#e75a8c;--bad:#c92a5b;--ok:#5aa469;--warn:#c47f17;--brand2:rgba(231,90,140,.14);--on-brand:#ffffff;
+  --glass:rgba(255,246,249,.96);
+  --tex:radial-gradient(ellipse 7px 4px at 30% 40%,rgba(240,140,170,.35) 60%,transparent 100%) 0 0/140px 120px,radial-gradient(ellipse 5px 3px at 70% 75%,rgba(250,170,195,.4) 60%,transparent 100%) 0 0/190px 160px,radial-gradient(ellipse 4px 6px at 15% 80%,rgba(240,150,180,.28) 60%,transparent 100%) 0 0/110px 150px;
+  --shadow:0 16px 50px rgba(120,40,70,.18);color-scheme:light;
+}
+[data-theme=snowy]{
+  --bg:#e6eef6;--panel:#fbfdff;--panel2:#eef4fa;--line:#d6e2ee;--ink:#1e2f40;--muted:#6a8096;
+  --brand:#3b8fd6;--bad:#e05a6d;--ok:#2f9e8f;--warn:#c98a1a;--brand2:rgba(59,143,214,.13);--on-brand:#ffffff;
+  --glass:rgba(251,253,255,.96);
+  --tex:radial-gradient(2px 2px at 25% 35%,rgba(255,255,255,.95) 60%,transparent 100%) 0 0/70px 66px,radial-gradient(1.5px 1.5px at 60% 70%,rgba(255,255,255,.9) 60%,transparent 100%) 0 0/43px 51px,radial-gradient(3px 3px at 80% 20%,rgba(255,255,255,.8) 60%,transparent 100%) 0 0/131px 117px;
+  --shadow:0 16px 50px rgba(30,60,100,.18);color-scheme:light;
+}
+:root{--r:12px}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI','Leelawadee UI','Yu Gothic UI','Microsoft YaHei',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:7px 14px;color:var(--ink)}
+button:hover{border-color:var(--brand)}
+button.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand);font-weight:600}
+button.primary:hover{filter:brightness(1.08)}
+button.danger{color:var(--bad)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--panel);color:var(--ink)}
+input[type=range],input[type=checkbox]{accent-color:var(--brand)}
+header{display:flex;align-items:center;gap:14px;padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:10px}
+.logo b{font-size:18px;letter-spacing:.2px}
+.logo small{color:var(--muted);display:block;font-size:11px;margin-top:-2px}
+.chips{margin-left:auto;display:flex;gap:8px;align-items:center}
+.chip{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;background:var(--panel2);font-size:12px;color:var(--muted);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#aab}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
+.cpubar{width:60px;height:6px;background:var(--line);border-radius:4px;overflow:hidden;position:relative}
+.cpubar i{position:absolute;left:0;top:0;bottom:0;background:var(--ok);transition:width .5s}
+.cpubar .lim{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--bad)}
+.wrap{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 57px)}
+aside{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+aside .new{padding:14px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+aside .list{overflow:auto;flex:1;padding:6px}
+.mitem{padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:2px}
+.mitem:hover{background:var(--panel2)}
+.mitem.on{background:var(--brand2)}
+.mitem .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mitem .s{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center;margin-top:2px}
+.badge{white-space:nowrap;font-size:11px;padding:1px 8px;border-radius:10px;background:var(--panel2);color:var(--muted)}
+.badge.done{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}.badge.run{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}.badge.err,.badge.live{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+main{overflow:auto;padding:22px 28px;min-height:0;background:var(--tex),var(--bg)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.drop{border:2px dashed color-mix(in srgb,var(--muted) 45%,transparent);border-radius:var(--r);padding:34px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
+.drop.hover{border-color:var(--brand);background:var(--brand2);color:var(--brand)}
+.drop b{color:var(--ink)}
+label.f{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.job{margin-top:10px}
+.job .bar{height:8px;background:var(--panel2);border-radius:5px;overflow:hidden}
+.job .bar i{display:block;height:100%;background:var(--brand);transition:width .4s}
+.job .lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;gap:10px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:4px 0 14px}
+.tabs button{border:none;border-bottom:2px solid transparent;border-radius:0;background:none;padding:8px 14px;color:var(--muted)}
+.tabs button.on{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.pills{display:flex;gap:6px;margin-bottom:12px}
+.pills button{border-radius:20px;padding:4px 14px;font-size:13px}
+.pills button.on{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+table.tr{width:100%;border-collapse:collapse}
+table.tr td{border-bottom:1px solid var(--line);padding:6px 6px;vertical-align:top}
+table.tr td.time{color:var(--muted);font-size:12px;width:62px;white-space:nowrap;padding-top:9px}
+table.tr td.spk{width:120px}
+table.tr td.spk input{width:110px;padding:4px 6px;font-size:12px}
+table.tr td.txt div{padding:3px 6px;border-radius:6px;outline:none;line-height:1.55}
+table.tr td.txt div:focus{background:var(--brand2)}
+table.tr td.tl{color:var(--ink);line-height:1.55;padding-top:9px}
+:lang(zh-Hans){font-family:'Segoe UI','Microsoft YaHei',sans-serif}:lang(zh-Hant){font-family:'Segoe UI','Microsoft JhengHei',sans-serif}
+.rep h3{font-size:14px;margin:18px 0 6px;color:var(--brand)}
+.rep ul{margin:0;padding-left:20px;line-height:1.6}
+.rep table{border-collapse:collapse;width:100%}
+.rep td,.rep th{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.rep th{background:var(--panel2)}
+.files a{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border:1px solid var(--line);border-radius:8px;margin:0 6px 6px 0;color:var(--ink);text-decoration:none;font-size:13px}
+.files a:hover{border-color:var(--brand);color:var(--brand)}
+.live-box{min-height:280px;max-height:52vh;overflow:auto;background:var(--panel2);border-radius:10px;padding:14px;line-height:1.7}
+.live-box .seg{margin-bottom:6px}
+.live-box .seg span{color:var(--muted);font-size:12px;margin-right:8px}
+.live-box .partial{color:var(--muted);font-style:italic}
+.meter{width:120px;height:8px;background:var(--panel2);border-radius:5px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ok);width:0}
+.rec{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--bad);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+.note{background:color-mix(in srgb,var(--warn) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.note.err{background:color-mix(in srgb,var(--bad) 11%,var(--panel));border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.note.info{background:var(--brand2);border-color:color-mix(in srgb,var(--brand) 30%,transparent)}
+.modal{position:fixed;inset:0;background:rgba(20,28,45,.35);display:none;align-items:center;justify-content:center;z-index:20}
+.modal.on{display:flex}
+.modal .box{background:var(--panel);color:var(--ink);box-shadow:var(--shadow);border-radius:16px;width:min(760px,94vw);max-height:90vh;overflow:auto;padding:22px 24px}
+.modal h3{margin:18px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.pop{position:fixed;z-index:40;top:58px;right:14px;width:380px;padding:14px 16px;border-radius:14px;background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:var(--shadow);max-height:calc(100vh - 80px);overflow:auto}
+.pop[hidden]{display:none}
+.phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+.phead b{font-size:15px}
+.xbtn{border:0;background:none;color:var(--muted);cursor:pointer;border-radius:8px;width:28px;height:28px;font-size:17px;line-height:1;padding:0}
+.xbtn:hover{background:var(--panel2);color:var(--ink)}
+.pnote{font-size:11.5px;color:var(--muted);margin:4px 0 8px}
+.thgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.thcard{border:1.5px solid var(--line);border-radius:13px;padding:7px;background:none;cursor:pointer;text-align:left;color:var(--ink)}
+.thcard:hover{border-color:var(--brand)}
+.thcard.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand2)}
+.thcard .prev{height:56px;border-radius:9px;position:relative;overflow:hidden;margin-bottom:7px}
+.thcard .prev i{position:absolute;border-radius:3px}
+.thcard b{font-size:12.5px}
+.thcard .pnote{margin:1px 0 0}
+button.icon{padding:6px 8px;line-height:0}
+.spkbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;padding:10px 12px;background:var(--panel2);border-radius:10px}
+.spkchip{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:3px 10px 3px 8px}
+.spkchip i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.spkchip input{border:0;padding:2px 2px;background:transparent;font-weight:600;min-width:60px}
+.spkchip small{color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:60px 20px}
+.empty h1{color:var(--ink);font-size:22px;margin-bottom:6px}
+.check{display:flex;align-items:center;gap:6px;font-size:13px}
+.spacer{flex:1}
+.hw td{padding:3px 12px 3px 0;font-size:13px}
+.hw td:first-child{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="openAbout()" style="cursor:pointer" title="About sMeetSec">
+    <svg width="34" height="34" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#222831"/><rect x="9" y="11" width="40" height="29" rx="7" fill="#f2f2f2"/><path d="M17 39 L12 51 L29 39 Z" fill="#f2f2f2"/><rect x="15" y="18" width="24" height="3.2" rx="1.6" fill="#8a93a6"/><rect x="15" y="24.4" width="17" height="3.2" rx="1.6" fill="#8a93a6"/><rect x="15" y="30.8" width="21" height="3.2" rx="1.6" fill="#8a93a6"/><circle cx="47" cy="12" r="5.5" fill="#ff6b6b" stroke="#222831" stroke-width="2"/><circle cx="50" cy="50" r="11" fill="#4dabf7"/><text x="50" y="55" font-size="15" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#fff">s</text></svg>
+    <div><b>sMeetSec</b><small>simply handle IT · Meeting Secretary · offline</small></div>
+  </div>
+  <div class="chips">
+    <div class="chip" id="chipCpu" title="Total CPU usage (3 s average). Red line = CPU guard limit."><span>CPU</span><div class="cpubar"><i id="cpuFill"></i><div class="lim" id="cpuLim"></div></div><span id="cpuVal">-</span></div>
+    <div class="chip" id="chipHw"><span class="dot"></span><span>Hardware…</span></div>
+    <div class="chip" id="chipLlm"><span class="dot"></span><span>LLM…</span></div>
+    <button class="icon" id="bTheme" title="Theme" onclick="openTheme()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 21 9.7C21 5.9 17 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/></svg></button>
+    <button onclick="openModels()" id="bModels" title="Speech, speaker and translation models">📦 Models</button>
+    <button onclick="openSettings()">⚙ Settings</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside>
+    <div class="new">
+      <button class="primary" onclick="showUpload()">＋ Upload recording</button>
+      <button id="btnLive" onclick="showLive()">● Live meeting</button>
+    </div>
+    <div class="list" id="mlist"></div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div class="pop" id="themePop" hidden></div>
+<div class="modal" id="modelsM"><div class="box" id="modelsBox"></div></div>
+<div class="modal" id="about"><div class="box" id="aboutBox"></div></div>
+<div class="modal" id="settings"><div class="box" id="settingsBox"></div></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const LANG = {ja:'Japanese', en:'English', th:'Thai', zh:'Chinese'};
+const LANGS = ['en','th','ja','zh'];
+const SPK_OPTS = (sel, withOff=true) => [[0,'Auto-detect speakers'], ...(withOff?[[-1,'Off (no speaker labels)']]:[]), ...[2,3,4,5,6,7,8].map(n=>[n, n+' speakers'])].map(([v,l]) => `<option value="${v}" ${v===sel?'selected':''}>${l}</option>`).join('');
+const LANG_OPTS = `<option value="auto">Auto-detect</option><option value="mixed">Mixed languages</option><option value="ja">Japanese</option><option value="en">English</option><option value="th">Thai</option><option value="zh">Chinese (Mandarin)</option>`;
+let SYS = null, MEETINGS = [], CUR = null, CUR_DATA = null, view = 'empty', tab = 'transcript', subLang = null, pollT = null;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = sec => { sec = Math.max(0, sec||0); const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = Math.floor(sec%60); return (h? h+':'+String(m).padStart(2,'0') : String(m).padStart(2,'0'))+':'+String(s).padStart(2,'0'); };
+const api = async (url, opt={}) => { const r = await fetch(url, opt); if (!r.ok) { let m = r.statusText; try { m = (await r.json()).detail || m } catch(e){} throw new Error(m) } return r.json(); };
+const post = (url, body, method='POST') => api(url, {method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body||{})});
+const STATUS = {new:['New',''], transcribing:['Transcribing','run'], transcribed:['Transcribed',''], live:['Live','live'], reporting:['Reporting','run'], done:['Report ready','done'], error:['Error','err']};
+
+// ------------------------------------------------------------- system
+async function loadSystem(){
+  SYS = await api('/api/system');
+  const t = SYS.hardware.tier, e = SYS.effective;
+  $('#chipHw').innerHTML = `<span class="dot ${t.device==='cuda'?'ok':'warn'}"></span><span>${esc(t.label)}</span>`;
+  $('#chipHw').title = `${SYS.hardware.cpu}\nRAM ${SYS.hardware.ram_gb} GB\nBatch model: ${e.batch_model}\nLive model: ${e.live_model}\nThreads: ${e.cpu_threads}`;
+  const l = SYS.llm;
+  const llmName = l.engine === 'builtin' ? (l.selected||'').replace(/\.gguf$/i,'').replace(/^Qwen_/,'') : l.selected;
+  $('#chipLlm').innerHTML = `<span class="dot ${l.running && l.installed ? 'ok' : l.running ? 'warn' : 'bad'}"></span><span>${l.running ? (l.installed ? 'LLM ' + esc(llmName) : 'LLM model missing') : (l.engine==='ollama' ? 'Ollama offline' : 'LLM engine missing')}</span>`;
+  $('#chipLlm').title = l.engine === 'builtin' ? (l.installed ? 'Built-in translation engine (llama.cpp)' : 'Open Models and download the translation model') : (l.running ? (l.installed ? 'Ollama is running' : `Run: ollama pull ${l.selected}`) : 'Ollama is not running');
+  $('#chipLlm').style.cursor = 'pointer'; $('#chipLlm').onclick = openModels;
+  $('#bModels').innerHTML = SYS.models_ready ? '📦 Models' : '📦 Models <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin-left:4px"></span>';
+  $('#btnLive').title = e.live_allowed ? '' : 'Live mode needs an NVIDIA GPU (or experimental mode in Settings)';
+}
+async function pollGuard(){
+  try {
+    const g = await api('/api/guard');
+    $('#cpuFill').style.width = Math.min(100, g.cpu) + '%';
+    $('#cpuFill').style.background = g.cpu > g.limit ? 'var(--bad)' : g.cpu > g.limit - 15 ? 'var(--warn)' : 'var(--ok)';
+    $('#cpuLim').style.left = g.limit + '%';
+    $('#cpuVal').textContent = Math.round(g.cpu) + '%' + (g.state === 'throttling' ? ' ⏸' : '');
+  } catch(e){}
+}
+
+// ------------------------------------------------------------- meetings list
+async function loadMeetings(){
+  MEETINGS = await api('/api/meetings');
+  $('#mlist').innerHTML = MEETINGS.length ? MEETINGS.map(m => {
+    const [txt, cls] = STATUS[m.status] || [m.status, ''];
+    const d = new Date(m.created*1000);
+    return `<div class="mitem ${CUR===m.id?'on':''}" onclick="openMeeting('${m.id}')">
+      <div class="t">${m.kind==='live'?'● ':''}${esc(m.title)}</div>
+      <div class="s"><span>${d.toLocaleDateString([], {day:'numeric',month:'short'})} ${d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>${m.duration?`<span>· ${fmt(m.duration)}</span>`:''}<span class="spacer"></span><span class="badge ${cls}">${txt}</span></div></div>`;
+  }).join('') : '<p class="muted" style="padding:14px">No meetings yet.</p>';
+}
+
+// ------------------------------------------------------------- views
+function showEmpty(){
+  view = 'empty'; CUR = null;
+  $('#main').innerHTML = `<div class="empty"><h1>Meeting Secretary</h1><p>Upload a meeting recording (audio or video) or start a live meeting.<br>Transcription, translation (Japanese · English · Thai · Chinese) and reports all run on this PC.</p>
+  <div class="row" style="justify-content:center;margin-top:18px"><button class="primary" onclick="showUpload()">＋ Upload recording</button><button onclick="showLive()">● Live meeting</button></div></div>`;
+  loadMeetings();
+}
+
+function showUpload(){
+  view = 'upload'; CUR = null; loadMeetings();
+  const notes = (SYS?.hardware.tier.notes || []).map(n => `<div class="note info">${esc(n)}</div>`).join('');
+  $('#main').innerHTML = `<div class="card"><h2>Upload a recording</h2>${notes}
+    <div class="drop" id="drop"><div style="font-size:30px">⬆</div><b>Drop an audio or video file here</b><br>or click to choose · mp3, m4a, wav, mp4, mkv, mov, webm …<input type="file" id="file" hidden accept="audio/*,video/*,.mkv,.wma,.wmv"></div>
+    <div id="chosen" class="muted" style="margin:10px 0"></div>
+    <div class="grid3" style="margin-top:10px">
+      <label class="f">Meeting title<input id="upTitle" placeholder="e.g. Weekly ECU project meeting"></label>
+      <label class="f">Spoken language<select id="upLang">${LANG_OPTS}</select></label>
+      <label class="f">Speakers${SYS.speakers.available?'':' (models not installed)'}<select id="upSpk" ${SYS.speakers.available?'':'disabled'}>${SPK_OPTS(SYS.settings.speakers_auto && SYS.speakers.available ? 0 : -1)}</select></label>
+    </div>
+    <div class="row" style="margin-top:14px"><label class="check"><input type="checkbox" id="upAuto" checked> Translate &amp; make report automatically after transcription</label>
+    <span class="spacer"></span><button class="primary" id="upBtn" onclick="doUpload()" disabled>Start transcription</button></div>
+    <div id="upProg"></div></div>`;
+  const drop = $('#drop'), inp = $('#file');
+  drop.onclick = () => inp.click();
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('hover') };
+  drop.ondragleave = () => drop.classList.remove('hover');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('hover'); if (e.dataTransfer.files[0]) { inp.files = e.dataTransfer.files; chosen() } };
+  inp.onchange = chosen;
+  function chosen(){ const f = inp.files[0]; if (!f) return; $('#chosen').innerHTML = `📄 <b>${esc(f.name)}</b> · ${(f.size/1048576).toFixed(1)} MB`; if (!$('#upTitle').value) $('#upTitle').value = f.name.replace(/\.[^.]+$/, ''); $('#upBtn').disabled = false; }
+}
+
+function doUpload(){
+  const f = $('#file').files[0]; if (!f) return;
+  const fd = new FormData();
+  fd.append('file', f); fd.append('title', $('#upTitle').value); fd.append('language', $('#upLang').value); fd.append('auto_report', $('#upAuto').checked); fd.append('speakers', $('#upSpk').value);
+  $('#upBtn').disabled = true;
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/upload');
+  xhr.upload.onprogress = e => { if (e.lengthComputable) $('#upProg').innerHTML = jobHtml({title:'Uploading', message: Math.round(e.loaded/e.total*100)+'%', progress: e.loaded/e.total, status:'running'}) };
+  xhr.onload = () => { if (xhr.status === 200) { const r = JSON.parse(xhr.responseText); openMeeting(r.meeting.id) } else { $('#upProg').innerHTML = `<div class="note err">${esc(xhr.responseText)}</div>`; $('#upBtn').disabled = false } };
+  xhr.onerror = () => { $('#upProg').innerHTML = `<div class="note err">Upload failed</div>`; $('#upBtn').disabled = false };
+  xhr.send(fd);
+}
+
+function jobHtml(j){
+  const cancel = j.id && ['queued','waiting','running'].includes(j.status) ? `<a href="#" onclick="cancelJob('${j.id}');return false" style="color:var(--bad)">Cancel</a>` : '';
+  return `<div class="job"><div class="lbl"><span><b>${esc(j.title)}</b> · ${esc(j.message)}</span><span>${Math.round((j.progress||0)*100)}% ${cancel}</span></div><div class="bar"><i style="width:${(j.progress||0)*100}%"></i></div></div>`;
+}
+async function cancelJob(id){ await post(`/api/jobs/${id}/cancel`); refreshMeeting(); }
+
+// ------------------------------------------------------------- meeting view
+async function openMeeting(id){
+  CUR = id; view = 'meeting'; subLang = null;
+  await refreshMeeting(true);
+  loadMeetings();
+}
+
+async function refreshMeeting(full){
+  if (view !== 'meeting' || !CUR) return;
+  let d; try { d = await api(`/api/meetings/${CUR}`) } catch(e){ showEmpty(); return }
+  const prevStatus = CUR_DATA?.meta.status, prevJobs = (CUR_DATA?.jobs||[]).length;
+  CUR_DATA = d;
+  if (full || prevStatus !== d.meta.status || prevJobs !== d.jobs.length) { renderMeeting(); loadMeetings(); }
+  else $('#jobs').innerHTML = jobsBlock(d);
+}
+
+function jobsBlock(d){
+  let h = d.jobs.map(jobHtml).join('');
+  if (d.meta.error && !d.jobs.length) h += `<div class="note err" style="margin-top:10px">${esc(d.meta.error)}</div>`;
+  return h;
+}
+
+function renderMeeting(){
+  const d = CUR_DATA, m = d.meta, t = d.transcript;
+  const busy = d.jobs.length > 0;
+  const [st, cls] = STATUS[m.status] || [m.status,''];
+  const langs = SYS.settings.report_languages || ['en','th','ja'];
+  const zhName = SYS.settings.chinese_script === 'traditional' ? 'Chinese (Trad.)' : 'Chinese';
+  const live = t?.live ? `<div class="note info">This transcript came from <b>live mode</b> (fast model). For the best quality, run <b>Full-quality transcription</b> on the recording.</div>` : '';
+  $('#main').innerHTML = `<div class="card">
+    <div class="row"><input id="mTitle" value="${esc(m.title)}" style="font-size:17px;font-weight:600;border-color:transparent;flex:1;min-width:200px" onchange="rename(this.value)"><span class="badge ${cls}">${st}</span></div>
+    <div class="muted" style="margin:6px 0 12px 10px">${new Date(m.created*1000).toLocaleString()} · ${m.duration?fmt(m.duration):'-'} · ${esc(m.source_name||'')} ${m.detected_language?`· spoken: <b>${LANG[m.detected_language]||m.detected_language}</b>`:''} ${t?`· model: ${esc(t.model)} (${esc(t.device)})`:''}</div>
+    <div class="row">
+      <select id="reLang" title="Spoken language">${LANG_OPTS}</select>
+      <button onclick="retranscribe()" ${busy||!m.source?'disabled':''}>${t?'↻ Full-quality transcription':'▶ Transcribe'}</button>
+      <select id="spkN" title="Number of speakers" ${SYS.speakers.available?'':'disabled'}>${SPK_OPTS(m.num_speakers > 0 ? m.num_speakers : 0, false)}</select>
+      <button onclick="identifySpeakers()" ${busy||!t||!m.source||!SYS.speakers.available?'disabled':''} title="${SYS.speakers.available?'Find who spoke when':'Speaker models not installed - run tools\\download_models.py'}">👥 Identify speakers</button>
+      <span class="spacer"></span>
+      <button class="danger" onclick="delMeeting()" ${busy?'disabled':''} title="Delete meeting">🗑</button>
+    </div>
+    <div class="row" style="margin-top:10px;justify-content:flex-end">
+      <span class="muted">Translate &amp; report in:</span>
+      ${LANGS.map(l => `<label class="check"><input type="checkbox" class="rl" value="${l}" ${langs.includes(l)?'checked':''}> ${l==='zh'?zhName:LANG[l]}</label>`).join('')}
+      <label class="check" title="Also translate the full transcript line by line"><input type="checkbox" id="trT" checked> + transcript</label>
+      <button class="primary" onclick="makeReport()" ${busy||!t?'disabled':''}>🌐 Translate &amp; report</button>
+    </div>
+    <div id="jobs">${jobsBlock(d)}</div></div>
+    ${live}
+    <div class="card">
+      <div class="tabs">${[['transcript','Transcript'],['translation','Translations'],['report','Report'],['files','Files']].map(([k,n]) => `<button class="${tab===k?'on':''}" onclick="tab='${k}';renderMeeting()">${n}</button>`).join('')}</div>
+      <div id="tabBody">${tabBody()}</div>
+    </div>`;
+  $('#reLang').value = m.language || 'auto';
+}
+
+function tabBody(){
+  const d = CUR_DATA, t = d.transcript;
+  if (tab === 'transcript'){
+    if (!t) return `<p class="muted">No transcript yet.</p>`;
+    if (!t.segments.length) return `<p class="muted">No speech was found in this recording.</p>`;
+    const people = [...new Set(t.segments.map(s=>s.speaker).filter(Boolean))];
+    const legend = people.length ? `<div class="spkbar"><span class="muted">Speakers - rename once, changes every line:</span>${people.map(p => `<label class="spkchip" style="--c:${spkColor(p)}"><i></i><input value="${esc(p)}" data-old="${esc(p)}" onchange="renameSpeaker(this)" size="${Math.max(6, p.length)}"><small>${t.segments.filter(s=>s.speaker===p).length}</small></label>`).join('')}</div>` : '';
+    return legend + `<div class="row" style="margin-bottom:8px"><span class="muted">Click text to correct it. Set speaker names before making the report - they become the owners of action items.</span><span class="spacer"></span><button onclick="saveEdits()" id="saveBtn">💾 Save edits</button></div>
+    <table class="tr">${t.segments.map((s,i) => `<tr><td class="time">${fmt(s.start)}</td><td class="spk"><input data-i="${i}" class="spkIn" value="${esc(s.speaker)}" placeholder="Speaker" list="spkList" style="${s.speaker?`border-left:4px solid ${spkColor(s.speaker)}`:''}"></td><td class="txt"><div contenteditable="true" data-i="${i}" class="txtIn">${esc(s.text)}</div></td></tr>`).join('')}</table>
+    <datalist id="spkList">${[...new Set(t.segments.map(s=>s.speaker).filter(Boolean))].map(s=>`<option value="${esc(s)}">`).join('')}</datalist>`;
+  }
+  if (tab === 'translation'){
+    const langs = Object.keys(d.translations);
+    if (!langs.length) return `<p class="muted">No translations yet. Tick the languages and "+ transcript", then press <b>Translate &amp; report</b>.</p>`;
+    if (!subLang || !langs.includes(subLang)) subLang = langs[0];
+    const lines = d.translations[subLang], segs = t?.segments || [];
+    const strip = s => s.replace(/^\[[\d:]+\]\s*/, '');
+    const side = lines.length === segs.length;
+    return pills(langs) + `<table class="tr">${side ? segs.map((s,i) => `<tr><td class="time">${fmt(s.start)}</td><td class="tl" style="width:50%;color:var(--muted)">${esc((s.speaker?s.speaker+': ':'')+s.text)}</td><td class="tl">${esc(strip(lines[i]))}</td></tr>`).join('')
+      : lines.map(l => `<tr><td class="tl">${esc(l)}</td></tr>`).join('')}</table>`;
+  }
+  if (tab === 'report'){
+    const langs = Object.keys(d.reports);
+    if (!langs.length) return `<p class="muted">No report yet. Press <b>Translate &amp; report</b>. (Needs Ollama running.)</p>`;
+    if (!subLang || !langs.includes(subLang)) subLang = langs[0];
+    const r = d.reports[subLang];
+    const T = {en:['Summary','Key points','Decisions','Action items','Open questions','Task','Owner','Due'], th:['สรุป','ประเด็นสำคัญ','ข้อตัดสินใจ','สิ่งที่ต้องดำเนินการ','คำถามที่ยังค้างอยู่','งาน','ผู้รับผิดชอบ','กำหนดเสร็จ'], ja:['概要','主な論点','決定事項','アクションアイテム','未解決の課題','タスク','担当者','期限'], zh: SYS.settings.chinese_script==='traditional' ? ['摘要','要點','決定事項','待辦事項','未解決的問題','任務','負責人','截止日期'] : ['摘要','要点','决定事项','待办事项','未解决的问题','任务','负责人','截止日期']}[subLang];
+    const ul = xs => xs.length ? `<ul>${xs.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="muted">-</p>';
+    return pills(langs) + `<div class="rep" lang="${subLang==='zh' ? (SYS.settings.chinese_script==='traditional'?'zh-Hant':'zh-Hans') : subLang}"><h2 style="margin:6px 0">${esc(r.title)}</h2>${r.meta?.participants?`<p class="muted" style="margin:0">👥 ${esc(r.meta.participants)}</p>`:''}
+      <h3>${T[0]}</h3><p style="line-height:1.65">${esc(r.summary)}</p><h3>${T[1]}</h3>${ul(r.key_points)}<h3>${T[2]}</h3>${ul(r.decisions)}
+      <h3>${T[3]}</h3>${r.action_items.length?`<table><tr><th>${T[5]}</th><th>${T[6]}</th><th>${T[7]}</th></tr>${r.action_items.map(a=>`<tr><td>${esc(a.task)}</td><td>${esc(a.owner)}</td><td>${esc(a.due)}</td></tr>`).join('')}</table>`:'<p class="muted">-</p>'}
+      <h3>${T[4]}</h3>${ul(r.open_questions)}</div>
+      <div class="row" style="margin-top:16px"><a href="/api/meetings/${CUR}/files/report.html" target="_blank"><button>Open printable report</button></a><a href="/api/meetings/${CUR}/files/report_${subLang}.docx"><button>Word (.docx)</button></a><a href="/api/meetings/${CUR}/files/report_${subLang}.md"><button>Markdown</button></a></div>`;
+  }
+  if (tab === 'files'){
+    const icon = n => n.endsWith('.docx')?'📝':n.endsWith('.html')?'🌐':n.match(/\.(wav|mp3|m4a|mp4|mkv|mov|webm|ogg|flac|aac)$/)?'🎧':n.endsWith('.srt')?'💬':'📄';
+    return `<div class="files">${d.files.map(f => `<a href="/api/meetings/${CUR}/files/${encodeURIComponent(f.name)}" target="_blank">${icon(f.name)} ${esc(f.name)} <span class="muted">${(f.size/1024).toFixed(0)} KB</span></a>`).join('')}</div>`;
+  }
+}
+function pills(langs){ return `<div class="pills">${langs.map(l => `<button class="${l===subLang?'on':''}" onclick="subLang='${l}';$('#tabBody').innerHTML=tabBody()">${LANG[l]}</button>`).join('')}</div>`; }
+
+async function rename(v){ await post(`/api/meetings/${CUR}`, {title:v}, 'PATCH'); loadMeetings(); }
+async function identifySpeakers(){ await post(`/api/meetings/${CUR}/speakers`, {speakers: +$('#spkN').value}); refreshMeeting(true); }
+async function renameSpeaker(inp){ const nv = inp.value.trim(); if (!nv || nv === inp.dataset.old) return; await post(`/api/meetings/${CUR}/rename_speaker`, {old: inp.dataset.old, new: nv}); refreshMeeting(true); }
+const SPK_COLORS = ['#4f46e5','#e8590c','#2f9e44','#d6336c','#1098ad','#7048e8','#f08c00','#5c940d','#c2255c','#1c7ed6'];
+function spkColor(name){ const ppl = [...new Set((CUR_DATA?.transcript?.segments||[]).map(s=>s.speaker).filter(Boolean))]; const i = ppl.indexOf(name); return SPK_COLORS[(i<0?0:i) % SPK_COLORS.length]; }
+async function retranscribe(){ await post(`/api/meetings/${CUR}/transcribe`, {language: $('#reLang').value, quality:'best'}); refreshMeeting(true); }
+async function makeReport(){
+  const langs = [...document.querySelectorAll('.rl:checked')].map(x=>x.value);
+  if (!langs.length) return alert('Choose at least one language.');
+  await loadSystem();
+  if (SYS.llm.engine === 'builtin' && !SYS.llm.installed) { alert('The translation model is not installed yet.'); return openModels(); }
+  if (SYS.llm.engine === 'ollama' && !SYS.llm.running) return alert('Ollama is not running. Start Ollama, or switch Settings > Translation engine to Built-in.');
+  await post(`/api/meetings/${CUR}/report`, {languages: langs, translate_transcript: $('#trT').checked}); refreshMeeting(true);
+}
+async function delMeeting(){ if (!confirm('Delete this meeting and all its files?')) return; await api(`/api/meetings/${CUR}`, {method:'DELETE'}); showEmpty(); }
+async function saveEdits(){
+  const segs = CUR_DATA.transcript.segments.map((s,i) => ({text: document.querySelector(`.txtIn[data-i="${i}"]`).innerText.trim(), speaker: document.querySelector(`.spkIn[data-i="${i}"]`).value.trim()}));
+  await post(`/api/meetings/${CUR}/transcript`, {segments: segs}, 'PUT');
+  $('#saveBtn').textContent = '✓ Saved'; setTimeout(()=>{ const b=$('#saveBtn'); if(b) b.textContent='💾 Save edits' }, 1500);
+  refreshMeeting(true);
+}
+
+// ------------------------------------------------------------- live
+let LV = null;
+function showLive(){
+  if (LV) { view = 'live'; return renderLive() }
+  view = 'live'; CUR = null; loadMeetings();
+  const e = SYS.effective;
+  const warn = !e.live_allowed
+    ? `<div class="note err"><b>Live mode is not available on this PC</b> (no NVIDIA GPU). Transcribing in real time would keep the CPU near 100%.<br>Record the meeting and use <b>Upload recording</b>, or enable <i>experimental live mode</i> in Settings.</div>`
+    : e.live_experimental ? `<div class="note">Experimental live mode on CPU (model <b>${esc(e.live_model)}</b>). Expect high CPU use and lower accuracy, especially for Thai. The recording is saved, so you can run a full-quality pass afterwards.</div>`
+    : `<div class="note info">Live model: <b>${esc(e.live_model)}</b> on GPU. The recording is saved so you can run a full-quality pass afterwards.</div>`;
+  $('#main').innerHTML = `<div class="card"><h2>Live meeting</h2>${warn}
+ <p class="muted" style="margin:0 0 10px">Tell participants the meeting is recorded and transcribed.</p>
+    <div class="grid3"><label class="f">Meeting title<input id="lvTitle" placeholder="e.g. Supplier call"></label>
+    <label class="f">Spoken language<select id="lvLang">${LANG_OPTS}</select></label>
+    <label class="f">Audio source<select id="lvSrc"><option value="mic">Microphone (meeting room)</option><option value="sys">System audio (Teams / Zoom on this PC)</option><option value="both">Microphone + system audio</option></select></label></div>
+    <div class="row" style="margin-top:14px"><button class="primary" id="lvStart" onclick="startLive()" ${e.live_allowed?'':'disabled'}>● Start</button>
+    ${IN_DESKTOP() ? `<span class="spacer"></span><span class="muted">System audio capture works best in a browser:</span><button onclick="smeetsecOpenBrowser()">Open in browser ↗</button>` : ''}</div></div>`;
+}
+
+function renderLive(){
+  $('#main').innerHTML = `<div class="card"><div class="row"><span class="rec"></span><b style="font-size:16px">${esc(LV.title||'Live meeting')}</b><span class="muted" id="lvTime">00:00</span>
+    <span class="spacer"></span><span class="muted">Level</span><div class="meter"><i id="lvLevel"></i></div><button class="danger" onclick="stopLive()" id="lvStop">■ Stop</button></div>
+    <div class="muted" id="lvStatus" style="margin:10px 0">${esc(LV.status||'Starting…')}</div>
+    <div class="live-box" id="lvBox">${LV.segs.map(segHtml).join('')}<div class="partial" id="lvPartial">${esc(LV.partial||'')}</div></div></div>`;
+}
+const segHtml = s => `<div class="seg"><span>${fmt(s.start)}</span>${esc(s.text)}</div>`;
+
+async function startLive(){
+  const src = $('#lvSrc').value, lang = $('#lvLang').value;
+  LV = {title: $('#lvTitle').value, segs: [], partial: '', status: 'Starting…', streams: [], ws: null, ctx: null};
+  try {
+    const streams = [];
+    if (src === 'mic' || src === 'both') streams.push(await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:1}}));
+    if (src === 'sys' || src === 'both') {
+      const ds = await navigator.mediaDevices.getDisplayMedia({video:true, audio:true});
+      if (!ds.getAudioTracks().length) { ds.getTracks().forEach(t=>t.stop()); throw new Error('No system audio was shared. In the share dialog, tick "Share system audio" (or "Share tab audio").'); }
+      streams.push(ds);
+    }
+    LV.streams = streams;
+    const ctx = new AudioContext({sampleRate: 16000});
+    LV.ctx = ctx;
+    const code = `class P extends AudioWorkletProcessor{constructor(){super();this.b=new Float32Array(1600);this.n=0}
+      process(inp){const c=inp[0];if(!c||!c.length)return true;const L=c[0].length;for(let i=0;i<L;i++){let v=0;for(let k=0;k<c.length;k++)v+=c[k][i];this.b[this.n++]=v/c.length;if(this.n===1600){this.port.postMessage(this.b.slice());this.n=0}}return true}}
+      registerProcessor('cap',P)`;
+    await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code], {type:'application/javascript'})));
+    const node = new AudioWorkletNode(ctx, 'cap', {channelCount:1, channelCountMode:'explicit'});
+    streams.forEach(s => ctx.createMediaStreamSource(new MediaStream(s.getAudioTracks())).connect(node));
+    const ratio = ctx.sampleRate / 16000;
+    const ws = new WebSocket(`ws://${location.host}/ws/live`);
+    ws.binaryType = 'arraybuffer';
+    LV.ws = ws;
+    ws.onopen = () => ws.send(JSON.stringify({title: LV.title, language: lang}));
+    ws.onmessage = ev => onLiveMsg(JSON.parse(ev.data));
+    ws.onclose = () => { if (LV && !LV.stopped) { LV.status = 'Connection closed'; cleanupLive(); } };
+    node.port.onmessage = ev => {
+      let x = ev.data;
+      if (ratio !== 1) { const n = Math.floor(x.length/ratio), y = new Float32Array(n); for (let i=0;i<n;i++) y[i] = x[Math.floor(i*ratio)]; x = y; }
+      let peak = 0; const pcm = new Int16Array(x.length);
+      for (let i=0;i<x.length;i++){ const v = Math.max(-1, Math.min(1, x[i])); pcm[i] = v*32767; peak = Math.max(peak, Math.abs(v)); }
+      const lv = document.getElementById('lvLevel'); if (lv) lv.style.width = Math.min(100, peak*140) + '%';
+      if (ws.readyState === 1 && LV.started) ws.send(pcm.buffer);
+    };
+    streams.forEach(s => s.getTracks().forEach(t => t.onended = () => stopLive()));
+    renderLive();
+  } catch(e) {
+    cleanupLive(); LV = null; showLive();
+    $('#main').insertAdjacentHTML('afterbegin', `<div class="note err">${esc(e.message || e)}</div>`);
+  }
+}
+
+function onLiveMsg(m){
+  if (!LV) return;
+  if (m.type === 'started') { LV.started = true; LV.mid = m.meeting_id; loadMeetings(); }
+  else if (m.type === 'status') LV.status = m.msg;
+  else if (m.type === 'error') { LV.status = m.msg; alert(m.msg); }
+  else if (m.type === 'partial') LV.partial = m.text;
+  else if (m.type === 'commit') { LV.segs.push(m.segment); LV.partial = ''; if (view==='live') { $('#lvPartial').insertAdjacentHTML('beforebegin', segHtml(m.segment)); } }
+  else if (m.type === 'cpu') { LV.sec = m.seconds; }
+  else if (m.type === 'stopped') { const id = m.meeting.id; LV.stopped = true; cleanupLive(); LV = null; openMeeting(id); return; }
+  if (view === 'live') {
+    const p = $('#lvPartial'); if (p) p.textContent = LV.partial || '';
+    const s = $('#lvStatus'); if (s) s.textContent = LV.status;
+    const t = $('#lvTime'); if (t) t.textContent = fmt(LV.sec||0);
+    const b = $('#lvBox'); if (b && m.type !== 'cpu') b.scrollTop = b.scrollHeight;
+  }
+}
+function stopLive(){
+  if (!LV || LV.stopping) return; LV.stopping = true; LV.status = 'Stopping - finishing the last sentence…';
+  const b = $('#lvStop'); if (b) b.disabled = true; const s = $('#lvStatus'); if (s) s.textContent = LV.status;
+  LV.streams.forEach(s => s.getTracks().forEach(t => { t.onended = null; t.stop() }));
+  try { LV.ctx && LV.ctx.close() } catch(e){}
+  if (LV.ws && LV.ws.readyState === 1) LV.ws.send(JSON.stringify({cmd:'stop'})); else { cleanupLive(); LV = null; showEmpty(); }
+}
+function cleanupLive(){ if (!LV) return; LV.streams.forEach(s => s.getTracks().forEach(t => { t.onended = null; t.stop() })); try { LV.ctx && LV.ctx.state !== 'closed' && LV.ctx.close() } catch(e){} try { LV.ws && LV.ws.readyState < 2 && LV.stopped && LV.ws.close() } catch(e){} }
+window.addEventListener('beforeunload', e => { if (LV && !LV.stopped) { e.preventDefault(); e.returnValue = ''; } });
+// Desktop window (sMeetSec.exe): ask before closing while a live meeting or a job is running.
+window.__smeetsecRequestClose = async () => {
+  try { window.smeetsecCloseAck && smeetsecCloseAck(); } catch(e){}
+  let running = [];
+  try { running = (await api('/api/jobs')).filter(j => ['queued','waiting','running'].includes(j.status)); } catch(e){}
+  const liveOn = LV && !LV.stopped;
+  if (liveOn || running.length) {
+    const what = liveOn ? 'A live meeting is being recorded.' : `${running.length} job(s) are still running (${running.map(j=>j.title).join(', ')}).`;
+    if (!confirm(what + '\n\nClose sMeetSec anyway? ' + (liveOn ? 'The recording so far is kept.' : 'Running jobs will stop.'))) return;
+    if (liveOn) { stopLive(); for (let i=0;i<40 && LV;i++) await new Promise(r=>setTimeout(r,250)); }
+  }
+  window.smeetsecQuit && smeetsecQuit();
+};
+const IN_DESKTOP = () => typeof window.smeetsecQuit === 'function';
+
+// ------------------------------------------------------------- settings
+function openSettings(){
+  const s = SYS.settings, hw = SYS.hardware, e = SYS.effective;
+  const models = ['auto','large-v3','large-v3-turbo','medium','small','base'];
+  const opt = (v, list) => list.map(x => `<option ${x===v?'selected':''}>${x}</option>`).join('');
+  $('#settingsBox').innerHTML = `<div class="row"><h2 style="margin:0">Settings</h2><span class="spacer"></span><button onclick="$('#settings').classList.remove('on')">✕</button></div>
+  <h3>This PC</h3><table class="hw">
+    <tr><td>CPU</td><td>${esc(hw.cpu)} (${hw.cpu_cores} cores / ${hw.cpu_threads} threads)</td></tr>
+    <tr><td>RAM</td><td>${hw.ram_gb} GB</td></tr>
+    <tr><td>GPU</td><td>${hw.gpus.length ? hw.gpus.map(g => esc(g.name)+(g.vram_gb?` (${g.vram_gb} GB)`:'')).join(', ') : 'No NVIDIA GPU'}</td></tr>
+    <tr><td>Tier</td><td><b>${esc(hw.tier.label)}</b> · batch: ${esc(e.batch_model)} · live: ${e.live_allowed ? esc(e.live_model) + (e.live_experimental?' (experimental)':'') : 'off'} · threads: ${e.cpu_threads}</td></tr>
+  </table>${SYS.gpu_fallback?`<div class="note err" style="margin-top:8px">${esc(SYS.gpu_fallback)}</div>`:''}
+  <h3>CPU guard</h3>
+  <div class="grid3">
+    <label class="f"><span>Limit: <b id="limV">${s.cpu_limit_percent}%</b></span><input type="range" id="sLim" min="50" max="95" step="5" value="${s.cpu_limit_percent}" oninput="$('#limV').textContent=this.value+'%'"></label>
+    <label class="f">When over the limit<select id="sAct"><option value="throttle" ${s.cpu_limit_action==='throttle'?'selected':''}>Throttle (pause, then resume)</option><option value="stop" ${s.cpu_limit_action==='stop'?'selected':''}>Stop the job</option></select></label>
+    <label class="f"><span>Share of CPU threads: <b id="frV">${Math.round(s.cpu_thread_fraction*100)}%</b></span><input type="range" id="sFr" min="0.25" max="1" step="0.05" value="${s.cpu_thread_fraction}" oninput="$('#frV').textContent=Math.round(this.value*100)+'%'"></label>
+  </div>
+  <label class="check" style="margin-top:8px"><input type="checkbox" id="sPri" ${s.low_priority?'checked':''}> Run at low priority (other apps first) - applies after restart</label>
+  <h3>Speech recognition</h3>
+  <div class="grid3">
+    <label class="f">Batch model<select id="sBm">${opt(s.batch_model, models)}</select></label>
+    <label class="f">Live model<select id="sLm">${opt(s.live_model, models)}</select></label>
+    <label class="f">Device<select id="sDev">${opt(s.device, ['auto','cpu','cuda'])}</select></label>
+  </div>
+  <label class="f" style="margin-top:10px">Thai model folder (optional, CTranslate2 Thai fine-tuned Whisper - used automatically for Thai)<input id="sThai" value="${esc(s.thai_model)}" placeholder="e.g. thai-distill-large-v3  (folder inside models\\, made by tools\\convert_thai_model.py)"></label>
+  <div class="row" style="margin-top:10px"><label class="check"><input type="checkbox" id="sSpk" ${s.speakers_auto?'checked':''}> Identify speakers automatically after transcription</label><span class="muted">${SYS.speakers.available?'· speaker models installed':'· speaker models not installed (run tools\\download_models.py)'}</span></div>
+  <label class="check" style="margin-top:10px"><input type="checkbox" id="sExp" ${s.live_force_experimental?'checked':''}> Allow experimental live mode without an NVIDIA GPU (high CPU load)</label>
+  <h3>Glossary</h3>
+  <label class="f">One term per line - names, products, part numbers. Optional "term = translation". Used by speech recognition and translation.
+  <textarea id="sGl" rows="4" placeholder="Somchai&#10;UDS&#10;SecurityAccess&#10;量産 = mass production" style="font-family:Consolas,monospace;font-size:12.5px">${esc(s.glossary||'')}</textarea></label>
+  <h3>Translation &amp; report</h3>
+  <div class="grid3">
+    <label class="f">Translation engine<select id="sEng" onchange="document.querySelectorAll('.olm').forEach(e=>e.style.display=this.value==='ollama'?'':'none');document.querySelectorAll('.blt').forEach(e=>e.style.display=this.value==='ollama'?'none':'')"><option value="builtin" ${s.llm_engine!=='ollama'?'selected':''}>Built-in (llama.cpp, no install)</option><option value="ollama" ${s.llm_engine==='ollama'?'selected':''}>Ollama (installed separately)</option></select></label>
+    <label class="f blt" style="${s.llm_engine==='ollama'?'display:none':''}">Model file (models\\llm)<select id="sGguf"><option value="auto">auto (${esc(SYS.hardware.tier.llm_size)} by RAM)</option>${(s.llm_engine!=='ollama'?SYS.llm.models:[]).map(m=>`<option ${m===s.llm_gguf?'selected':''}>${esc(m)}</option>`).join('')}</select></label>
+    <label class="f olm" style="${s.llm_engine==='ollama'?'':'display:none'}">Ollama URL<input id="sOu" value="${esc(s.ollama_url)}"></label>
+    <label class="f olm" style="${s.llm_engine==='ollama'?'':'display:none'}">Ollama model (auto = ${esc(SYS.hardware.tier.llm_model)})<input id="sLlm" value="${esc(s.llm_model)}"></label>
+    <label class="f">Chinese characters<select id="sZh"><option value="simplified" ${s.chinese_script!=='traditional'?'selected':''}>Simplified (简体)</option><option value="traditional" ${s.chinese_script==='traditional'?'selected':''}>Traditional (繁體)</option></select></label>
+  </div>
+  <div class="row" style="margin-top:10px"><span class="muted">Default report languages:</span>${LANGS.map(l => `<label class="check"><input type="checkbox" class="sRl" value="${l}" ${s.report_languages.includes(l)?'checked':''}> ${LANG[l]}</label>`).join('')}</div>
+  <div class="row" style="margin-top:20px"><span class="muted">sMeetSec ${esc(SYS.app.version)}${SYS.app.mock?' · MOCK MODE':''}</span><span class="spacer"></span><button onclick="$('#settings').classList.remove('on')">Cancel</button><button class="primary" onclick="saveSettings()">Save</button></div>`;
+  $('#settings').classList.add('on');
+}
+async function saveSettings(){
+  await post('/api/settings', {
+    cpu_limit_percent: +$('#sLim').value, cpu_limit_action: $('#sAct').value, cpu_thread_fraction: +$('#sFr').value, low_priority: $('#sPri').checked,
+    batch_model: $('#sBm').value, live_model: $('#sLm').value, device: $('#sDev').value, thai_model: $('#sThai').value.trim(),
+    live_force_experimental: $('#sExp').checked, speakers_auto: $('#sSpk').checked, glossary: $('#sGl').value, chinese_script: $('#sZh').value, llm_engine: $('#sEng').value, llm_gguf: $('#sGguf').value, ollama_url: $('#sOu').value.trim(), llm_model: $('#sLlm').value.trim() || 'auto',
+    report_languages: [...document.querySelectorAll('.sRl:checked')].map(x=>x.value),
+  });
+  $('#settings').classList.remove('on');
+  await loadSystem();
+  if (view === 'live' && !LV) showLive();
+}
+async function openAbout(){
+  const a = SYS.app, sp = SYS.speakers, l = SYS.llm;
+  const row = (k, v) => `<tr><td>${k}</td><td>${v}</td></tr>`;
+  $('#aboutBox').innerHTML = `<div class="row"><div class="logo">${document.querySelector('header .logo svg').outerHTML}<div><b style="font-size:20px">sMeetSec ${esc(a.version)}</b><small>simply handle IT · Meeting Secretary</small></div></div><span class="spacer"></span><button onclick="$('#about').classList.remove('on')">✕</button></div>
+  <p>Offline meeting secretary: transcribe recordings or live meetings, identify speakers, and translate &amp; report in Japanese · English · Thai · Chinese. <b>Nothing leaves this computer.</b></p>
+  <table class="hw">${row('Speech', 'faster-whisper · ' + esc(SYS.effective.batch_model) + ' (' + esc(SYS.effective.device) + ')')}${row('Speakers', sp.available ? 'installed (sherpa-onnx)' : 'not installed - open Models')}${row('Translation', l.engine === 'builtin' ? 'built-in llama.cpp · ' + (l.installed ? esc(l.selected) : 'model not installed') : (l.running ? 'Ollama · ' + esc(l.selected) : 'Ollama not running'))}${row('Data folder', 'data\\meetings\\ in the sMeetSec folder')}</table>
+  <div class="note info" style="margin-top:14px">Recording people: tell participants the meeting is recorded and transcribed, and follow your company rules and the PDPA.</div>
+  <div class="row"><button onclick="showLegal('PRIVACY')">Privacy</button><button onclick="showLegal('THIRD-PARTY-NOTICES')">Third-party notices</button><span class="spacer"></span>${IN_DESKTOP() ? '<button onclick="smeetsecOpenBrowser()">Open in browser ↗</button>' : ''}</div>
+  <pre id="legalTxt" style="display:none;white-space:pre-wrap;font-size:12px;background:var(--panel2);padding:12px;border-radius:10px;max-height:40vh;overflow:auto;margin-top:12px"></pre>`;
+  $('#about').classList.add('on');
+}
+async function showLegal(n){ const r = await api('/api/legal/' + n); const p = $('#legalTxt'); p.textContent = r.text; p.style.display = 'block'; }
+let modelsTimer = null;
+async function openModels(){
+  $('#modelsM').classList.add('on');
+  await renderModels();
+  clearInterval(modelsTimer);
+  modelsTimer = setInterval(async () => { if (!$('#modelsM').classList.contains('on')) { clearInterval(modelsTimer); return; } await renderModels(); }, 1200);
+}
+async function renderModels(){
+  const r = await api('/api/models');
+  const job = r.jobs[0];
+  const missing = r.items.filter(i => !i.present && !(i.id==='llm' && i.engine==='ollama'));
+  const wasRunning = renderModels.running; renderModels.running = !!job;
+  if (wasRunning && !job) loadSystem();
+  $('#modelsBox').innerHTML = `<div class="row"><h2 style="margin:0">Models</h2><span class="spacer"></span><button onclick="$('#modelsM').classList.remove('on')">✕</button></div>
+  <p class="muted">sMeetSec needs three AI models. They are downloaded once (internet needed only for this) into the <b>models</b> folder next to sMeetSec.exe. For a PC without internet, copy the models folder from another PC.</p>
+  <table class="tr">${r.items.map(i => `<tr><td style="width:28px;font-size:18px">${i.present ? '✅' : '⬜'}</td><td><b>${esc(i.label)}</b>${i.id==='llm'&&i.engine==='ollama'?' <span class="muted">(using Ollama)</span>':''}</td><td class="muted" style="width:120px">${esc(i.size)}</td><td style="width:120px">${i.present ? '<span class="badge done">installed</span>' : '<span class="badge err">missing</span>'}</td></tr>`).join('')}</table>
+  ${job ? jobHtml(job) : (r.last && ['error','stopped'].includes(r.last.status) ? `<div class="note err" style="margin-top:12px">${esc(r.last.error || r.last.message)}</div>` : '')}
+  <div class="row" style="margin-top:16px"><span class="muted">Free disk space: ${r.free_gb} GB</span><span class="spacer"></span>
+    ${IN_DESKTOP() ? '<button onclick="smeetsecOpenModels()">Open models folder</button>' : ''}
+    <button class="primary" onclick="downloadModels()" ${job || !missing.length ? 'disabled' : ''}>${missing.length ? '⬇ Download missing models' : 'All models installed'}</button></div>`;
+}
+async function downloadModels(){ await post('/api/models/download', {}); renderModels(); }
+$('#modelsM').onclick = e => { if (e.target.id === 'modelsM') $('#modelsM').classList.remove('on') };
+$('#about').onclick = e => { if (e.target.id === 'about') $('#about').classList.remove('on') };
+$('#settings').onclick = e => { if (e.target.id === 'settings') $('#settings').classList.remove('on') };
+
+// ------------------------------------------------------------- themes (same picker as sGenko / sUML / sERP)
+const THEMES={
+  simple:{name:'Simple',note:'clean white (default)',panel:'#ffffff',head:'#f4f5f8',stage:'#e9ebf0',line:'#dfe3ea',a:'#4f46e5',b:'#7c3aed'},
+  dark:{name:'Dark',note:'low glare for night work',panel:'#23272e',head:'#2b3038',stage:'#15171b',line:'#3a404b',a:'#4dabf7',b:'#ff6b6b'},
+  starry:{name:'Starry Night',note:'deep blue sky, cold blue',panel:'#0c1a3d',head:'#11234d',stage:'#0a1530',line:'rgba(160,190,255,.25)',a:'#8cc8ff',b:'#4f7fe0',dots:'#ffffffaa'},
+  forest:{name:'Forest',note:'greens, parchment',panel:'#f8f5ec',head:'#efeadc',stage:'#e3ebdc',line:'rgba(47,90,54,.25)',a:'#2f6b3a',b:'#5c8f3c'},
+  burning:{name:'Burning',note:'charcoal, ember glow',panel:'#1c120e',head:'#261813',stage:'#150e0b',line:'rgba(255,140,80,.25)',a:'#ff7a33',b:'#ee0979'},
+  sakura:{name:'Sakura',note:'cherry-blossom pink',panel:'#fff6f9',head:'#fdebf1',stage:'#f7e3ea',line:'#f0cbd8',a:'#e75a8c',b:'#f4a6c1',petals:true},
+  snowy:{name:'Snowy',note:'cool white & ice blue',panel:'#fbfdff',head:'#eef4fa',stage:'#e6eef6',line:'#d3dfeb',a:'#3b8fd6',b:'#9cc9ee',dots:'#ffffff'},
+};
+let themeName = document.documentElement.dataset.theme || 'simple';
+function applyTheme(){ if (!THEMES[themeName]) themeName = 'simple'; document.documentElement.dataset.theme = themeName; try { localStorage.setItem('smeetsec.theme', themeName) } catch(e){} }
+function openTheme(){
+  const pop = $('#themePop'); if (!pop.hidden) { pop.hidden = true; return; }
+  let g = ''; for (const [k,t] of Object.entries(THEMES)) {
+    const deco = t.petals ? `<i style="left:96px;top:30px;width:7px;height:5px;border-radius:50%;background:#f4a6c1"></i><i style="left:120px;top:42px;width:6px;height:4px;border-radius:50%;background:#f8bfd2"></i><i style="left:108px;top:18px;width:5px;height:4px;border-radius:50%;background:#f4a6c1"></i>` : t.dots ? `<i style="left:98px;top:24px;width:3px;height:3px;border-radius:50%;background:${t.dots}"></i><i style="left:120px;top:38px;width:2px;height:2px;border-radius:50%;background:${t.dots}"></i><i style="left:132px;top:22px;width:3px;height:3px;border-radius:50%;background:${t.dots}"></i>` : '';
+    g += `<button class="thcard${themeName===k?' on':''}" data-th="${k}"><div class="prev" style="background:${t.stage};box-shadow:inset 0 0 0 1px ${t.line}"><i style="left:0;top:0;right:0;height:11px;background:${t.head};border-radius:0;border-bottom:1px solid ${t.line}"></i><i style="left:0;top:11px;bottom:0;width:30px;background:${t.panel};border-radius:0;border-right:1px solid ${t.line}"></i><i style="left:7px;top:17px;width:16px;height:5px;background:${t.a}"></i><i style="left:7px;top:26px;width:16px;height:5px;background:${t.line}"></i><i style="left:7px;top:35px;width:16px;height:5px;background:${t.line}"></i><i style="left:42px;top:17px;width:44px;height:33px;background:${t.panel};border-radius:4px;box-shadow:inset 0 0 0 1px ${t.line}"></i><i style="left:48px;top:24px;width:26px;height:3px;background:${t.b}"></i><i style="left:48px;top:31px;width:32px;height:2px;background:${t.line}"></i><i style="left:48px;top:37px;width:22px;height:2px;background:${t.line}"></i>${deco}</div><b>${t.name}</b><div class="pnote">${t.note}</div></button>`;
+  }
+  pop.innerHTML = `<div class="phead"><b>Theme</b><button class="xbtn" data-x>×</button></div><div class="thgrid">${g}</div><div class="pnote">Same themes as sGenko / sUML / sERP. Kept on this computer.</div>`;
+  pop.hidden = false; pop.querySelector('[data-x]').onclick = () => pop.hidden = true;
+  pop.querySelectorAll('[data-th]').forEach(b => b.onclick = () => { themeName = b.dataset.th; applyTheme(); post('/api/settings', {theme: themeName}).catch(()=>{}); pop.hidden = true; openTheme(); });
+}
+document.addEventListener('pointerdown', e => { const p = $('#themePop'); if (!p.hidden && !p.contains(e.target) && !e.target.closest('#bTheme')) p.hidden = true; });
+
+// ------------------------------------------------------------- start
+(async () => {
+  await loadSystem(); if (!SYS.models_ready && !SYS.app.mock) openModels(); if (SYS.settings.theme && SYS.settings.theme !== themeName) { themeName = SYS.settings.theme; applyTheme(); } showEmpty(); pollGuard();
+  setInterval(pollGuard, 2000);
+  setInterval(() => { if (view === 'meeting') refreshMeeting(); }, 1500);
+  setInterval(() => { if (view !== 'live') loadMeetings(); }, 8000);
+  setInterval(loadSystem, 30000);
+})();
+</script>
+</body>
+</html>

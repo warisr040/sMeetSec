@@ -1,0 +1,275 @@
+{
+ "about": "Translation test cases for sMeetSec (ja/en/th/zh). Each case is a single utterance with NO surrounding context, from simple to complicated. 'ref' are human reference translations; 'must_keep' are strings that must appear unchanged in every output (codes, numbers, names). Run: python tools/translation_test.py Chinese references are Simplified.",
+ "cases": [
+  {
+   "id": "L1-01",
+   "level": 1,
+   "level_name": "Simple",
+   "src": "en",
+   "text": "Good morning. Let's start the meeting.",
+   "ref": {
+    "ja": "おはようございます。会議を始めましょう。",
+    "th": "สวัสดีตอนเช้าครับ เริ่มประชุมกันเลยครับ",
+    "zh": "早上好。我们开始开会吧。"
+   },
+   "check": "Basic greeting; Thai polite particle (ครับ/ค่ะ) is acceptable either way.",
+   "must_keep": []
+  },
+  {
+   "id": "L1-02",
+   "level": 1,
+   "level_name": "Simple",
+   "src": "th",
+   "text": "วันนี้มีวาระทั้งหมดสามเรื่องครับ",
+   "ref": {
+    "en": "We have three agenda items today.",
+    "ja": "本日の議題は全部で3件です。",
+    "zh": "今天一共有三个议题。"
+   },
+   "check": "Number word สาม must become 3 / three.",
+   "must_keep": []
+  },
+  {
+   "id": "L1-03",
+   "level": 1,
+   "level_name": "Simple",
+   "src": "ja",
+   "text": "資料は昨日メールで送りました。",
+   "ref": {
+    "en": "I sent the materials by email yesterday.",
+    "th": "ผมส่งเอกสารทางอีเมลไปเมื่อวานแล้วครับ",
+    "zh": "我昨天已经用邮件把资料发过去了。"
+   },
+   "check": "Japanese drops the subject; 'I' or 'we' are both acceptable, but the model must not invent a name.",
+   "must_keep": []
+  },
+  {
+   "id": "L2-01",
+   "level": 2,
+   "level_name": "Business, dates and numbers",
+   "src": "en",
+   "text": "The deadline moved from March 15 to the end of April, and the budget is 2.4 million baht.",
+   "ref": {
+    "ja": "締め切りは3月15日から4月末に変更になり、予算は240万バーツです。",
+    "th": "กำหนดส่งเลื่อนจากวันที่ 15 มีนาคมเป็นสิ้นเดือนเมษายน และงบประมาณอยู่ที่ 2.4 ล้านบาท",
+    "zh": "截止日期从3月15日推迟到了4月底，预算为240万泰铢。"
+   },
+   "check": "2.4 million = 240万 in Japanese (common error: 2.4万 or 24万). Dates must not shift. Chinese: 2.4 million = 240万 (not 2.4万).",
+   "must_keep": [
+    "15"
+   ]
+  },
+  {
+   "id": "L2-02",
+   "level": 2,
+   "level_name": "Business, dates and numbers",
+   "src": "ja",
+   "text": "来週の水曜日までに見積もりをいただけますか。",
+   "ref": {
+    "en": "Could you send us the quote by next Wednesday?",
+    "th": "รบกวนส่งใบเสนอราคาภายในวันพุธหน้าได้ไหมครับ",
+    "zh": "能否请您在下周三之前把报价单发给我们？"
+   },
+   "check": "Polite request form must stay polite; 見積もり = quotation, not 'estimate of time'.",
+   "must_keep": []
+  },
+  {
+   "id": "L3-01",
+   "level": 3,
+   "level_name": "Technical (automotive diagnostics)",
+   "src": "en",
+   "text": "When we send the key for SecurityAccess (0x27), the ECU returns NRC 0x35, so the key calculation is probably wrong.",
+   "ref": {
+    "ja": "SecurityAccess（0x27）でキーを送ると、ECUがNRC 0x35を返すので、キーの計算が間違っている可能性が高いです。",
+    "th": "พอเราส่ง key ของ SecurityAccess (0x27) ไป ECU ตอบกลับเป็น NRC 0x35 แสดงว่าการคำนวณ key น่าจะผิดครับ",
+    "zh": "我们在SecurityAccess（0x27）中发送密钥时，ECU返回NRC 0x35，所以密钥的计算很可能有误。"
+   },
+   "check": "Hex codes, 'ECU', 'NRC' and the service name must be kept exactly. 'key' must not become 'ข้อมูลสำคัญ' / '重要' (key = important).",
+   "must_keep": [
+    "0x27",
+    "0x35",
+    "ECU",
+    "NRC"
+   ]
+  },
+  {
+   "id": "L3-02",
+   "level": 3,
+   "level_name": "Technical (automotive diagnostics)",
+   "src": "th",
+   "text": "ช่วยเช็ค CAN log ตอน flash ให้หน่อย เหมือน bus load จะเกินแปดสิบเปอร์เซ็นต์",
+   "ref": {
+    "en": "Could you check the CAN log during flashing? It looks like the bus load goes over 80%.",
+    "ja": "フラッシュ中のCANログを確認してもらえますか。バス負荷が80%を超えているようです。",
+    "zh": "能帮忙看一下刷写时的CAN日志吗？总线负载好像超过了80%。"
+   },
+   "check": "Thai-English code-switching. 'flash' = ECU flashing (reprogramming), not a camera flash. แปดสิบเปอร์เซ็นต์ = 80%. Chinese: 'flash' = 刷写 (reprogramming), not 闪光.",
+   "must_keep": [
+    "CAN"
+   ]
+  },
+  {
+   "id": "L4-01",
+   "level": 4,
+   "level_name": "No context / ambiguous",
+   "src": "ja",
+   "text": "あ、それ、もう大丈夫です。",
+   "ref": {
+    "en": "Oh, that's fine now. / Oh, we don't need that anymore.",
+    "th": "อ้อ เรื่องนั้นไม่เป็นไรแล้วครับ",
+    "zh": "啊，那个已经没问题了。/ 那个已经不需要了。"
+   },
+   "check": "大丈夫 can mean 'already solved' or 'no longer needed'. Without context both are valid; the model should not add a reason that was not said.",
+   "must_keep": []
+  },
+  {
+   "id": "L4-02",
+   "level": 4,
+   "level_name": "No context / ambiguous",
+   "src": "ja",
+   "text": "検討します。",
+   "ref": {
+    "en": "We'll consider it.",
+    "th": "จะขอพิจารณาดูครับ",
+    "zh": "我们会考虑一下。"
+   },
+   "check": "In Japanese business this is often a polite non-commitment. Translation should stay neutral ('consider'), not become 'Yes, we will do it'.",
+   "must_keep": []
+  },
+  {
+   "id": "L4-03",
+   "level": 4,
+   "level_name": "No context / ambiguous",
+   "src": "th",
+   "text": "เดี๋ยวพี่เขาจะส่งมาให้นะ",
+   "ref": {
+    "en": "He'll / She'll (our senior colleague) send it over shortly.",
+    "ja": "（先輩の）あの方が後で送ってくれます。",
+    "zh": "待会儿那位前辈会把它发过来。"
+   },
+   "check": "พี่ is a kinship/seniority term, not 'brother'; เขา has no gender. Wrong: 'My older brother will send it'. Chinese: use a neutral form (那位/对方); 哥哥 is wrong.",
+   "must_keep": []
+  },
+  {
+   "id": "L4-04",
+   "level": 4,
+   "level_name": "No context / ambiguous",
+   "src": "en",
+   "text": "Can you do it by Friday? If not, push it.",
+   "ref": {
+    "ja": "金曜日までにできますか。無理なら延期してください。",
+    "th": "ทำให้เสร็จภายในวันศุกร์ได้ไหม ถ้าไม่ได้ก็เลื่อนออกไป",
+    "zh": "你能在周五之前完成吗？如果不行，就延期吧。"
+   },
+   "check": "'push it' = postpone here. Wrong readings: 押す (press), กดดัน (pressure), git push. Chinese: 延期/推迟, not 推 (push physically) or 催 (urge).",
+   "must_keep": []
+  },
+  {
+   "id": "L5-01",
+   "level": 5,
+   "level_name": "Complicated (long, conditional)",
+   "src": "ja",
+   "text": "前回の打ち合わせでは、サプライヤー側の都合で納期が2週間遅れるという話でしたが、こちらとしては量産開始日をずらすわけにはいかないので、最悪の場合、試作品だけでも先に出してもらえないか交渉してみます。",
+   "ref": {
+    "en": "At the last meeting, we were told the delivery would be two weeks late because of the supplier's circumstances. But we can't move the mass-production start date, so in the worst case I'll try to negotiate for them to at least send the prototypes first.",
+    "th": "ในการประชุมครั้งก่อน ทางซัพพลายเออร์แจ้งว่าการส่งของจะล่าช้าไปสองสัปดาห์เพราะเหตุผลทางฝั่งเขา แต่ฝั่งเราเลื่อนวันเริ่มผลิตจริงไม่ได้ ดังนั้นในกรณีที่แย่ที่สุด ผมจะลองเจรจาขอให้เขาส่งชิ้นงานต้นแบบมาก่อนอย่างน้อยก็ได้",
+    "zh": "上次开会时说，由于供应商方面的原因，交货期会推迟两周。但我们这边不能推迟量产开始日期，所以最坏的情况下，我会去谈判，看能不能至少先把试制品发过来。"
+   },
+   "check": "Long sentence with cause, constraint and fallback plan; all three must survive. 'だけでも' = 'at least'. Who negotiates = the speaker's side.",
+   "must_keep": []
+  },
+  {
+   "id": "L5-02",
+   "level": 5,
+   "level_name": "Complicated (3-language code-switching)",
+   "src": "th",
+   "text": "ตามที่ Tanaka-san บอก spec ตัวใหม่ยังไม่ fix นะครับ ถ้าเรา start coding ตอนนี้ อาจจะต้องทำใหม่หมด แต่ถ้ารอ schedule ก็จะ delay อีก ผมว่าเราทำส่วน common ไปก่อนดีกว่า",
+   "ref": {
+    "en": "As Tanaka-san said, the new spec isn't finalized yet. If we start coding now, we might have to redo everything, but if we wait, the schedule will slip again. I think it's better to do the common parts first.",
+    "ja": "田中さんがおっしゃったとおり、新しい仕様はまだ確定していません。今コーディングを始めると全部やり直しになるかもしれませんが、待つとスケジュールがまた遅れます。共通部分を先に進めたほうがいいと思います。",
+    "zh": "正如Tanaka先生所说，新规格还没有确定。如果我们现在开始编码，可能要全部重做；但如果等待，进度又会延误。我觉得最好先做通用部分。"
+   },
+   "check": "Mixed Thai/English/Japanese honorific. 'fix' = finalized (not repair). Name: 'Tanaka-san' in English; in Japanese the kanji 田中 is a guess - タナカさん is the safe form. Chinese: 'fix' = 确定/定下来, not 修复.",
+   "must_keep": [
+    "Tanaka"
+   ]
+  },
+  {
+   "id": "L5-03",
+   "level": 5,
+   "level_name": "Complicated (double negation)",
+   "src": "en",
+   "text": "It's not that we don't want to support the new protocol, but unless the customer pays for the validation, we can't commit to it this year.",
+   "ref": {
+    "ja": "新しいプロトコルに対応したくないわけではありませんが、お客様が検証費用を負担しない限り、今年中の対応はお約束できません。",
+    "th": "ไม่ใช่ว่าเราไม่อยากรองรับโปรโตคอลใหม่นะครับ แต่ถ้าลูกค้าไม่จ่ายค่าตรวจสอบความถูกต้อง เราก็รับปากว่าจะทำให้ได้ภายในปีนี้ไม่ได้",
+    "zh": "并不是我们不想支持新协议，而是除非客户承担验证费用，否则我们无法承诺今年内完成。"
+   },
+   "check": "Double negation + 'unless'. Most common failure: flipping the meaning to 'we don't want to support it'.",
+   "must_keep": []
+  },
+  {
+   "id": "Z1-01",
+   "level": 1,
+   "level_name": "Simple",
+   "src": "zh",
+   "text": "大家好，我们五分钟后开始。",
+   "ref": {
+    "en": "Hello everyone, we'll start in five minutes.",
+    "ja": "皆さん、こんにちは。5分後に始めます。",
+    "th": "สวัสดีทุกคนครับ อีกห้านาทีเราจะเริ่มกันครับ"
+   },
+   "check": "Basic Chinese source; 五分钟 = 5 minutes.",
+   "must_keep": []
+  },
+  {
+   "id": "Z3-01",
+   "level": 3,
+   "level_name": "Technical (automotive diagnostics)",
+   "src": "zh",
+   "text": "这个ECU的UDS诊断会话切换到0x03以后，DTC读不出来。",
+   "ref": {
+    "en": "After switching this ECU's UDS diagnostic session to 0x03, the DTCs can't be read.",
+    "ja": "このECUのUDS診断セッションを0x03に切り替えた後、DTCが読み出せません。",
+    "th": "หลังจากเปลี่ยน diagnostic session ของ UDS ใน ECU ตัวนี้เป็น 0x03 แล้ว อ่าน DTC ไม่ได้ครับ"
+   },
+   "check": "Codes ECU / UDS / DTC / 0x03 must stay. 读不出来 = cannot be read (not 'not displayed').",
+   "must_keep": [
+    "ECU",
+    "UDS",
+    "DTC",
+    "0x03"
+   ]
+  },
+  {
+   "id": "Z4-01",
+   "level": 4,
+   "level_name": "No context / ambiguous",
+   "src": "zh",
+   "text": "这个问题我们回去再研究一下。",
+   "ref": {
+    "en": "We'll take this back and look into it further.",
+    "ja": "この件は持ち帰って検討します。",
+    "th": "เรื่องนี้ขอกลับไปศึกษาดูอีกทีครับ"
+   },
+   "check": "Like 検討します, often a polite deferral. Must not become a promise ('we will fix it'). 研究 here = look into, not 'do research'.",
+   "must_keep": []
+  },
+  {
+   "id": "Z5-01",
+   "level": 5,
+   "level_name": "Complicated (code-switching + double negation)",
+   "src": "zh",
+   "text": "Tanaka桑说的那个方案，我觉得成本上不太现实，不过如果客户愿意分担一部分，也不是完全不能考虑。",
+   "ref": {
+    "en": "I don't think the plan Tanaka-san mentioned is very realistic in terms of cost, but if the customer is willing to cover part of it, it's not completely out of the question.",
+    "ja": "タナカさんがおっしゃったその案は、コスト的にあまり現実的ではないと思いますが、お客様が一部を負担してくれるなら、まったく検討できないわけではありません。",
+    "th": "แผนที่ Tanaka-san พูดถึง ผมคิดว่าในแง่ต้นทุนไม่ค่อยสมจริงเท่าไร แต่ถ้าลูกค้ายินดีรับภาระบางส่วน ก็ไม่ใช่ว่าจะพิจารณาไม่ได้เลยครับ"
+   },
+   "check": "桑 is Chinese slang for Japanese さん. 也不是完全不能考虑 = 'not completely out of the question' (double negation); flipping it to 'cannot consider' is the typical failure.",
+   "must_keep": [
+    "Tanaka"
+   ]
+  }
+ ]
+}

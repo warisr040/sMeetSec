@@ -1,0 +1,118 @@
+# Builds the ready-to-run Windows package: no Python, no Ollama needed on the user's PC.
+#   sMeetSec.exe          desktop window (Go + WebView2)
+#   backend\              the engine (Python app frozen with PyInstaller)
+#   llama\                llama.cpp llama-server.exe (built-in translation engine, CPU build)
+#   models\               empty - filled by the app's Models > Download (or copied from another PC)
+# Push a tag like v0.3.0 to also publish a GitHub Release with the zip.
+name: build-windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller httpx websockets
+
+      - name: Automated test (mock mode)
+        run: python tests/smoke_test.py
+
+      - name: Build engine (PyInstaller)
+        run: >
+          pyinstaller --noconfirm --name sMeetSec-server --noconsole --icon logo/icon.ico
+          --add-data "smeetsec/static;smeetsec/static" --add-data "legal;legal"
+          --collect-all faster_whisper --collect-all ctranslate2 --collect-all av
+          --collect-all sherpa_onnx --collect-all onnxruntime --collect-all docx
+          --collect-submodules uvicorn --collect-submodules websockets
+          run.py
+
+      - name: Check the engine starts (frozen build)
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath dist\sMeetSec-server\sMeetSec-server.exe -ArgumentList '--no-browser','--port','47999' -PassThru
+          $ok = $false
+          for ($i = 0; $i -lt 60; $i++) {
+            Start-Sleep -Seconds 1
+            try { $r = Invoke-RestMethod http://127.0.0.1:47999/api/system; $ok = $true; break } catch {}
+          }
+          Stop-Process -Id $p.Id -Force
+          Start-Sleep -Seconds 2
+          Remove-Item dist\sMeetSec-server\data, dist\sMeetSec-server\models -Recurse -Force -ErrorAction SilentlyContinue
+          if (-not $ok) { Write-Error 'frozen engine did not answer'; exit 1 }
+          Write-Output "engine OK: version $($r.app.version), tier $($r.hardware.tier.id)"
+
+      - name: Download llama.cpp (Windows CPU build)
+        shell: pwsh
+        run: |
+          $rel = gh api repos/ggml-org/llama.cpp/releases/latest | ConvertFrom-Json
+          Write-Output "llama.cpp release: $($rel.tag_name)"
+          $asset = $rel.assets | Where-Object { $_.name -match 'win' -and $_.name -match 'cpu' -and $_.name -match 'x64' -and $_.name -like '*.zip' } | Select-Object -First 1
+          if (-not $asset) {
+            $asset = $rel.assets | Where-Object { $_.name -match 'win' -and $_.name -match 'x64' -and $_.name -like '*.zip' -and $_.name -notmatch 'cuda|vulkan|sycl|hip|arm64|cudart' } | Select-Object -First 1
+          }
+          if (-not $asset) { $rel.assets | ForEach-Object { $_.name }; Write-Error 'no Windows CPU asset found'; exit 1 }
+          Write-Output "asset: $($asset.name)"
+          Invoke-WebRequest $asset.browser_download_url -OutFile llama.zip
+          Expand-Archive llama.zip -DestinationPath llama-tmp -Force
+          $srv = Get-ChildItem llama-tmp -Recurse -Filter llama-server.exe | Select-Object -First 1
+          if (-not $srv) { Write-Error 'llama-server.exe not in the asset'; exit 1 }
+          New-Item -ItemType Directory -Force -Path llama | Out-Null
+          Copy-Item (Join-Path $srv.DirectoryName '*') llama -Recurse -Force
+          & .\llama\llama-server.exe --version
+          Set-Content llama\VERSION.txt "llama.cpp $($rel.tag_name) ($($asset.name))"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: desktop/go.sum
+
+      - name: Build sMeetSec.exe (desktop window)
+        working-directory: desktop
+        env:
+          CGO_ENABLED: "0"
+        run: go build -trimpath -ldflags "-s -w -H windowsgui" -o sMeetSec.exe .
+
+      - name: Assemble package
+        shell: pwsh
+        run: |
+          $ver = (Select-String -Path smeetsec\config.py -Pattern 'APP_VERSION = "(.+)"').Matches[0].Groups[1].Value
+          $name = "sMeetSec-$ver"
+          $out = "pkg\$name"
+          New-Item -ItemType Directory -Force -Path $out, "$out\models", "$out\data" | Out-Null
+          Copy-Item desktop\sMeetSec.exe $out
+          Copy-Item dist\sMeetSec-server "$out\backend" -Recurse
+          Copy-Item llama "$out\llama" -Recurse
+          Copy-Item legal "$out\legal" -Recurse
+          Copy-Item README.md, CHANGELOG.md, README-Windows.txt $out
+          Set-Content "$out\models\README.txt" "Models go here. Use sMeetSec > Models > Download, or copy this folder from another PC."
+          Compress-Archive -Path $out -DestinationPath "sMeetSec-v$ver-windows.zip" -CompressionLevel Optimal
+          "ZIP=sMeetSec-v$ver-windows.zip" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Get-ChildItem *.zip | ForEach-Object { "{0}  {1:N0} MB" -f $_.Name, ($_.Length / 1MB) }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sMeetSec-windows
+          path: ${{ env.ZIP }}
+
+      - name: Publish release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: gh release create $env:GITHUB_REF_NAME $env:ZIP --title "sMeetSec $env:GITHUB_REF_NAME" --notes-file CHANGELOG.md

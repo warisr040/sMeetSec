@@ -1,0 +1,83 @@
+sMeetSec — third-party notices
+==============================
+
+sMeetSec (simply handle IT) is built on the open-source software and models below.
+Each is used under its own license. Full license texts are included with each package
+(in the .venv\Lib\site-packages\<package> folder after setup, or in backend\_internal\
+for the packaged build) and at the project addresses listed.
+
+------------------------------------------------------------
+Software installed by setup_windows.bat / bundled in the backend
+------------------------------------------------------------
+faster-whisper ............ MIT ............. SYSTRAN — github.com/SYSTRAN/faster-whisper
+CTranslate2 ............... MIT ............. OpenNMT — github.com/OpenNMT/CTranslate2
+PyAV ...................... BSD-3-Clause .... github.com/PyAV-Org/PyAV
+  includes FFmpeg libraries  LGPL-2.1-or-later  ffmpeg.org (dynamically linked)
+sherpa-onnx ............... Apache-2.0 ...... k2-fsa — github.com/k2-fsa/sherpa-onnx
+ONNX Runtime .............. MIT ............. Microsoft — github.com/microsoft/onnxruntime
+FastAPI ................... MIT ............. github.com/fastapi/fastapi
+Starlette ................. BSD-3-Clause .... github.com/encode/starlette
+Uvicorn ................... BSD-3-Clause .... github.com/encode/uvicorn
+python-multipart .......... Apache-2.0 ...... github.com/Kludex/python-multipart
+python-docx ............... MIT ............. github.com/python-openxml/python-docx
+psutil .................... BSD-3-Clause .... github.com/giampaolo/psutil
+NumPy ..................... BSD-3-Clause .... numpy.org
+huggingface_hub ........... Apache-2.0 ...... github.com/huggingface/huggingface_hub (model download only)
+tokenizers ................ Apache-2.0 ...... github.com/huggingface/tokenizers
+NVIDIA cuBLAS / cuDNN ..... NVIDIA license .. only installed on PCs with an NVIDIA GPU (pip packages
+                                              nvidia-cublas-cu12, nvidia-cudnn-cu12)
+
+------------------------------------------------------------
+Built-in translation engine (llama\ folder)
+------------------------------------------------------------
+llama.cpp / ggml ............ MIT ............. Copyright (c) 2023-2026 The ggml authors — github.com/ggml-org/llama.cpp
+  (Windows CPU build from the official llama.cpp releases; see llama\VERSION.txt)
+
+------------------------------------------------------------
+sMeetSec.exe (desktop window)
+------------------------------------------------------------
+go-webview2 ............... MIT ............. Copyright (c) 2020 John Chadwick, portions (c) 2017 Serge Zaitsev
+go-winloader .............. ISC ............. Copyright (c) 2021 John Chadwick
+Go x/sys, Go runtime ...... BSD-3-Clause .... Copyright (c) 2009 The Go Authors
+Microsoft Edge WebView2 Runtime is NOT included; sMeetSec uses the copy installed with
+Windows 10/11 under Microsoft's license terms.
+
+------------------------------------------------------------
+Models (downloaded separately, not part of sMeetSec)
+------------------------------------------------------------
+OpenAI Whisper large-v3 / large-v3-turbo / small / base ... MIT (OpenAI)
+  CTranslate2 conversions: Systran/faster-whisper-* (MIT), mobiuslabsgmbh/faster-whisper-large-v3-turbo (MIT)
+pyannote segmentation 3.0 (ONNX export by sherpa-onnx) .... MIT (pyannote / Hervé Bredin)
+3D-Speaker ERes2Net speaker embedding ..................... Apache-2.0 (Alibaba / ModelScope 3D-Speaker)
+Thonburian Whisper (optional, Thai) ....................... Apache-2.0 (Biomedical and Data Lab, Mahidol University)
+
+Translation / report model (run by the built-in llama.cpp engine, or by Ollama if chosen):
+Qwen3.5 4B / 9B (default choice) .......................... Apache-2.0 (Qwen team, Alibaba Cloud)
+  GGUF quantization by bartowski (Hugging Face) ........... same license as the original model
+Ollama (optional, installed separately by the user) ....... MIT
+Note: if you choose another model in Settings, check its license first. For example
+Qwen2.5-3B uses the "Qwen Research" license (non-commercial only), and Gemma / Llama models
+have their own use policies.
+
+------------------------------------------------------------
+MIT License (template, applies to the MIT items above with their own copyright lines)
+------------------------------------------------------------
+Permission is hereby granted, free of charge, to any person obtaining a copy of this
+software and associated documentation files (the "Software"), to deal in the Software
+without restriction, including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+BSD-3-Clause, ISC, Apache-2.0 and LGPL texts: see each package's LICENSE file
+(Apache-2.0: apache.org/licenses/LICENSE-2.0 · LGPL-2.1: gnu.org/licenses/old-licenses/lgpl-2.1).
+
+sMeetSec is not made, sponsored or endorsed by OpenAI, Alibaba, Microsoft, NVIDIA, Ollama
+or any of the projects above.

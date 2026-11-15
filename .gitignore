@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+data/
+models/
+build/
+dist/
+*.spec
+backend/
+desktop/sMeetSec.exe
+runtime/
