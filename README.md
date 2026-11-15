@@ -97,7 +97,7 @@ Default: **Qwen3.5** 4B / 9B (Apache-2.0, fine for company use, 201 languages) r
 
 GitHub Actions (`.github/workflows/build-windows.yml`) builds the package on a Windows machine at every push to `main`:
 tests → PyInstaller engine → check the frozen engine starts → latest llama.cpp Windows CPU build → `sMeetSec.exe` (Go) → zip.
-Push a tag `v0.3.0` to publish it as a GitHub Release.
+Each build on `main` publishes (or updates) the GitHub Release for the version in `smeetsec/config.py`.
 
 Local pieces: `desktop\` (Go source of `sMeetSec.exe`), `build_backend.bat` (PyInstaller engine on your own PC).
 
