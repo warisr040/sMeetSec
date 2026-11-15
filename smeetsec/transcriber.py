@@ -89,8 +89,31 @@ def load_audio(path: str | Path) -> np.ndarray:
                 return np.zeros(int(n * SAMPLE_RATE / w.getframerate()), dtype=np.float32)
         except Exception:
             return np.zeros(SAMPLE_RATE * 95, dtype=np.float32)
-    from faster_whisper.audio import decode_audio
-    return decode_audio(str(path), sampling_rate=SAMPLE_RATE)
+    return _decode(path)
+
+
+def _decode(path: str | Path) -> np.ndarray:
+    """Own decoder (PyAV) - works across PyAV versions (faster-whisper's helper breaks on PyAV >= 16)."""
+    import av
+
+    try:
+        container = av.open(str(path), mode="r", metadata_errors="ignore")
+    except TypeError:
+        container = av.open(str(path), mode="r")
+    chunks = []
+    with container:
+        if not container.streams.audio:
+            raise ValueError("The file has no audio track.")
+        stream = container.streams.audio[0]
+        resampler = av.audio.resampler.AudioResampler(format="s16", layout="mono", rate=SAMPLE_RATE)
+        for frame in container.decode(stream):
+            for f in resampler.resample(frame):
+                chunks.append(f.to_ndarray().reshape(-1))
+        for f in resampler.resample(None):
+            chunks.append(f.to_ndarray().reshape(-1))
+    if not chunks:
+        return np.zeros(0, dtype=np.float32)
+    return np.concatenate(chunks).astype(np.float32) / 32768.0
 
 
 def transcribe_file(path: str | Path, language: str = "auto", quality: str = "best",
