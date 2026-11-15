@@ -92,7 +92,12 @@ def build_report(t: dict, source: str, progress, cancel) -> dict:
     for i, ch in enumerate(chunks):
         governor.checkpoint(cancel)
         progress(0.1 + 0.5 * i / max(1, len(chunks)), f"Reading the meeting ({i + 1}/{len(chunks)})")
-        notes.append(llm.chat_json(sys_notes, "\n".join(ch)))
+        try:
+            notes.append(llm.chat_json(sys_notes, "\n".join(ch)))
+        except llm.LLMError as e:
+            if "valid JSON" not in str(e):
+                raise
+            notes.append({"points": [], "note": f"part {i + 1} could not be summarised"})
 
     governor.checkpoint(cancel)
     progress(0.65, "Writing the report")

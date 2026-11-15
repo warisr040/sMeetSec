@@ -161,7 +161,8 @@ def _builtin_chat(system: str, user: str, json_mode: bool, num_ctx: int, tempera
     body = {
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
         "temperature": temperature,
-        "max_tokens": 4096,
+        "max_tokens": 3072,
+        "repeat_penalty": 1.1,  # llama.cpp: stops runaway repetition from small models
         "stream": False,
         # Qwen3.x: answer directly, no "thinking" (much faster on CPU)
         "chat_template_kwargs": {"enable_thinking": False},
@@ -270,15 +271,20 @@ def chat(system: str, user: str, json_mode: bool = False, num_ctx: int = 8192,
 
 
 def chat_json(system: str, user: str, **kw):
-    """Ask for JSON; if the model ignores JSON mode, retry once in plain mode."""
-    try:
-        return parse_json(chat(system, user, json_mode=True, **kw))
-    except LLMError as e:
-        msg = str(e)
-        if any(k in msg for k in ("not running", "not installed", "No translation model", "missing", "not reachable",
-                                  "did not start", "stopped")):
-            raise
-        return parse_json(chat(system + " Return only valid JSON, no other text.", user, json_mode=False, **kw))
+    """Ask for JSON; on broken JSON retry (plain mode, then once more), then give up with LLMError."""
+    fatal = ("not running", "not installed", "No translation model", "missing", "not reachable", "did not start",
+             "stopped")
+    attempts = [(system, True, 0.2), (system + " Return only valid, complete JSON, no other text.", False, 0.0),
+                (system + " Keep it short. Return only valid, complete JSON.", True, 0.0)]
+    last = None
+    for sys_prompt, jm, temp in attempts:
+        try:
+            return parse_json(chat(sys_prompt, user, json_mode=jm, temperature=temp, **kw))
+        except LLMError as e:
+            if any(k in str(e) for k in fatal):
+                raise
+            last = e
+    raise last or LLMError("The LLM did not return valid JSON.")
 
 
 def parse_json(text: str):
@@ -286,10 +292,15 @@ def parse_json(text: str):
     try:
         return json.loads(text)
     except Exception:
-        m = re.search(r"\{.*\}", text, re.S)
-        if m:
-            return json.loads(m.group(0))
-        raise LLMError("The LLM did not return valid JSON.")
+        pass
+    i = text.find("{")
+    if i >= 0:
+        try:  # first complete JSON object, ignoring anything after it
+            obj, _ = json.JSONDecoder().raw_decode(text[i:])
+            return obj
+        except Exception:
+            pass
+    raise LLMError("The LLM did not return valid JSON.")
 
 
 # ---------------------------------------------------------------- mock
